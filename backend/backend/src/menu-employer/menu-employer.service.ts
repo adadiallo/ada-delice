@@ -1,5 +1,5 @@
 // menu.service.ts
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { MenuEmployer } from './entities/menu-employer.entity';
@@ -28,5 +28,33 @@ findByType(type: string) {
   }
   return this.menuRepository.find({ where: { type } });
 }
+
+async remove(id: number) {
+  const menu = await this.menuRepository.findOne({ where: { id } });
+  if (!menu) {
+    throw new NotFoundException(`Menu avec ${id} non trouvé`);
+  }
+  await this.menuRepository.remove(menu);
+  return { message: `Menu avec ${id} supprimé avec succès` };
+}
+
+async update(id: number, updateData: Partial<CreateMenuEmployerDto>) {
+  const menu = await this.menuRepository.findOne({ where: { id } });
+  if (!menu) {
+    throw new NotFoundException(`Menu avec l'id ${id} non trouvé`);
+  }
+
+  // Met à jour seulement les champs fournis
+  Object.assign(menu, updateData);
+
+  return this.menuRepository.save(menu);
+}
+
+
+
+
+
+
+
 
 }
