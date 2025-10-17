@@ -6,6 +6,9 @@ import { User } from './user/entities/user.entity';
 import { MenuEmployerModule } from './menu-employer/menu-employer.module';
 import { MenuEmployer } from './menu-employer/entities/menu-employer.entity';
 import { CloudinaryService } from './cloudinary/cloudinary.service';
+import { PanierModule } from './panier/panier.module';
+import { Panier } from './panier/entities/panier.entity';
+import { PanierItem } from './panier/entities/panier-item.entity';
 
 @Module({
   imports: [
@@ -16,12 +19,13 @@ import { CloudinaryService } from './cloudinary/cloudinary.service';
       username: 'postgres',
       password: 'adminPassword',
       database: 'restaurant',
-      entities: [User,MenuEmployer],
+      entities: [User,MenuEmployer,Panier,PanierItem],
       synchronize: true, 
     }),
     AuthModule,
     UserModule,
     MenuEmployerModule,
+    PanierModule,
   ],
   providers: [CloudinaryService],
 })

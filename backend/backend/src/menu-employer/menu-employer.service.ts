@@ -44,7 +44,6 @@ async update(id: number, updateData: Partial<CreateMenuEmployerDto>) {
     throw new NotFoundException(`Menu avec l'id ${id} non trouvé`);
   }
 
-  // Met à jour seulement les champs fournis
   Object.assign(menu, updateData);
 
   return this.menuRepository.save(menu);

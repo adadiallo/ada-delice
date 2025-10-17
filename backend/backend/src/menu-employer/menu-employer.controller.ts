@@ -25,8 +25,9 @@ export class MenuEmployerController {
     private menuService: MenuEmployerService,
     private readonly cloudinaryService: CloudinaryService,
   ) {}
+      @UseGuards(JwtAuthGuard)
+
   @Post()
-    @UseGuards(JwtAuthGuard)
 
   @UseInterceptors(FileInterceptor('image'))
   async create(
@@ -54,6 +55,7 @@ export class MenuEmployerController {
     if (type) return this.menuService.findByType(type);
     return this.menuService.findAll();
   }
+@UseGuards(JwtAuthGuard)
 
   @Delete(":id")
   
@@ -61,9 +63,9 @@ export class MenuEmployerController {
     const menuId = parseInt(id,10);
     return this.menuService.remove(menuId)
   }
+@UseGuards(JwtAuthGuard)
 
 @Patch(':id')
-@UseGuards(JwtAuthGuard)
 @UseInterceptors(FileInterceptor('image'))
 async update(
   @Param('id') id: string,
