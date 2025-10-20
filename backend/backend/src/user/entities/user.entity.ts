@@ -1,3 +1,4 @@
+import { Commande } from 'src/commande/entites/commande.entity';
 import { Panier } from 'src/panier/entities/panier.entity';
 import { Column, Entity, PrimaryGeneratedColumn, OneToMany } from 'typeorm';
 
@@ -32,4 +33,6 @@ export class User {
 
   @OneToMany(() => Panier, (panier) => panier.user)
   paniers: Panier[];
+  @OneToMany(() => Commande ,(commande) => commande.user )
+  commandes:Commande
 }

@@ -20,28 +20,35 @@ export class PanierService {
     private userRepository: Repository<User>,
   ) {}
 
-  async create(createPanierDto: CreatePanierDto) {
-    const user = await this.userRepository.findOne({ where: { id: createPanierDto.userId } });
-    if (!user) throw new NotFoundException('Utilisateur non trouvé');
+async create(createPanierDto: CreatePanierDto) {
+  const user = await this.userRepository.findOne({ where: { id: createPanierDto.userId } });
+  if (!user) throw new NotFoundException('Utilisateur non trouvé');
 
-    const panier = this.panierRepository.create({ user, isValidated: false });
+  // Crée le panier sans items d'abord
+  const panier = this.panierRepository.create({ user, isValidated: false });
+  await this.panierRepository.save(panier);
 
-    panier.items = [];
+  // Crée les items et les associe
+  const items: PanierItem[] = [];
+  for (const itemDto of createPanierDto.items) {
+    const menu = await this.menuRepository.findOne({ where: { id: itemDto.menuId } });
+    if (!menu) throw new NotFoundException(`Menu ${itemDto.menuId} non trouvé`);
 
-    for (const item of createPanierDto.items) {
-      const menu = await this.menuRepository.findOne({ where: { id: item.menuId } });
-      if (!menu) throw new NotFoundException(`Menu ${item.menuId} non trouvé`);
+    const panierItem = this.panierItemRepository.create({
+      menu,
+      quantity: itemDto.quantity,
+      panier, // maintenant panier a un id
+    });
 
-      const panierItem = this.panierItemRepository.create({
-        menu,
-        quantity: item.quantity,
-        panier,
-      });
-      panier.items.push(panierItem);
-    }
-
-    return this.panierRepository.save(panier);
+    items.push(panierItem);
   }
+
+  await this.panierItemRepository.save(items);
+
+  // Recharge le panier avec les items
+  panier.items = items;
+  return panier;
+}
 
   async getByUser(userId: number) {
     return this.panierRepository.find({
