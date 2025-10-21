@@ -20,7 +20,7 @@ export class AuthService {
       throw new ConflictException('Email déjà utilisé');
     }
 
-    const allowedRoles = ['admin', 'entreprise', 'employe'];
+    const allowedRoles = ['admin', 'entreprise', 'employee'];
     if (dto.role && !allowedRoles.includes(dto.role)) {
       throw new BadRequestException('Rôle invalide');
     }
@@ -32,7 +32,7 @@ export class AuthService {
       password: hashedPassword,
       nom: dto.nom || 'inconnu',
       nomEntreprise: dto.nomEntreprise,
-      role: dto.role || 'employe',
+      role: dto.role || 'employee',
       entrepriseId: dto.entrepriseId,
     });
 

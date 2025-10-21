@@ -9,8 +9,8 @@ import { Commande } from './entites/commande.entity';
 import { CommandeItem } from './entites/commande-item.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Commande, CommandeItem, Panier, User])],
   controllers: [CommandeController],
   providers: [CommandeService],
+  imports: [TypeOrmModule.forFeature([Commande, CommandeItem, Panier, User])],
 })
 export class CommandeModule {}
