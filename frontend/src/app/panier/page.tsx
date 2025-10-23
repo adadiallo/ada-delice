@@ -1,8 +1,8 @@
 "use client";
 
+import Footer from "@/components/footer";
 import { usePanier } from "../../components/context/panierContext";
 import NavbarEmployer from "../navbarEmployer/page";
-import Footer from "../footer/page";
 import Image from "next/image";
 
 export default function PanierPage() {

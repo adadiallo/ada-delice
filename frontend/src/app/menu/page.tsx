@@ -3,9 +3,9 @@
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import NavbarEmployer from "../navbarEmployer/page";
-import Footer from "../footer/page";
 import { usePanier } from "../../components/context/panierContext";
 import { Card, CardHeader, CardContent, CardTitle, CardDescription } from "@/components/ui/card";
+import Footer from "@/components/footer";
 
 type MenuEmployer = {
   id: number;

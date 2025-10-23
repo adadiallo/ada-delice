@@ -1,10 +1,10 @@
 "use client";
 
+import HeroSection from "@/components/page";
 import Navbar from "./Navbar/page";
-import HeroSection from "./hereSection/page";
-import FormulesSection from "./formules/page";
-import SectionConfiance from "./partenaire/app";
-import Footer from "./footer/page";
+// import FormulesSection from "./formules/page";
+// import SectionConfiance from "./partenaire/app";
+import Footer from "@/components/footer";
 
 
 export default function HomePage() {
@@ -23,10 +23,10 @@ export default function HomePage() {
 
 
 
-<FormulesSection/>
+{/* <FormulesSection/> */}
 
 
-<SectionConfiance/>     
+{/* <SectionConfiance/>      */}
 <section className="py-20 px-6 md:px-20 bg-gray-100 overflow-hidden">
   <div className="max-w-7xl mx-auto text-center">
     <h2 className="text-4xl font-extrabold text-gray-800 mb-6 fade-up">
