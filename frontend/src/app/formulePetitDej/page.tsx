@@ -1,8 +1,8 @@
 "use client";
 import Image from "next/image";
 import Link from "next/link";
-import Navbar from "../Navbar/page";
 import Footer from "@/components/footer";
+import Navbar from "@/components/navbar";
 
 export default function PetitDejeunerPage() {
   const menus = [
