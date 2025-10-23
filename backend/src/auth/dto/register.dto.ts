@@ -18,7 +18,5 @@ export class RegisterDto {
   @IsOptional()
   nom?: string; 
 
-  @IsOptional()
-  @IsNumber()
-  entrepriseId?: number;
+
 }

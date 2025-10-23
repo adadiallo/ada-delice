@@ -1,11 +1,11 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
-
-import { Panier } from 'src/panier/entities/panier.entity';
-import { User } from 'src/user/entities/user.entity';
-import { Commande } from './entites/commande.entity';
-import { CommandeItem } from './entites/commande-item.entity';
+import { Injectable, NotFoundException } from "@nestjs/common";
+import { InjectRepository } from "@nestjs/typeorm";
+import { Commande } from "./entites/commande.entity";
+import { Repository } from "typeorm";
+import { CommandeItem } from "./entites/commande-item.entity";
+import { Panier } from "src/panier/entities/panier.entity";
+import { User } from "src/user/entities/user.entity";
+import { PanierService } from "src/panier/panier.service";
 
 @Injectable()
 export class CommandeService {
@@ -14,8 +14,7 @@ export class CommandeService {
     private commandeRepository: Repository<Commande>,
     @InjectRepository(CommandeItem)
     private commandeItemRepository: Repository<CommandeItem>,
-    @InjectRepository(Panier)
-    private panierRepository: Repository<Panier>,
+    private panierService: PanierService, // on utilise le service panier
     @InjectRepository(User)
     private userRepository: Repository<User>,
   ) {}
@@ -24,24 +23,18 @@ export class CommandeService {
     const user = await this.userRepository.findOne({ where: { id: userId } });
     if (!user) throw new NotFoundException('Utilisateur non trouvé');
 
-    const panier = await this.panierRepository.findOne({
-      where: { user: { id: userId }, isValidated: false },
-      relations: ['items', 'items.menu'],
-    });
+    const panier = await this.panierService.getOrCreatePanier(userId);
 
-    if (!panier) throw new NotFoundException('Aucun panier trouvé');
+    if (!panier.items || panier.items.length === 0) {
+      return { success: false, message: 'Votre panier est vide', commande: null };
+    }
 
-    // Calcul du total
-    const total = panier.items.reduce(
-      (acc, item) => acc + Number(item.menu.prix) * item.quantity,
-      0,
-    );
+    const total = panier.items.reduce((sum, i) => sum + Number(i.menu.prix) * i.quantity, 0);
 
-    // Création de la commande
     const commande = this.commandeRepository.create({
-      user,
+      user: { id: userId },
       total,
-      items: panier.items.map((item) =>
+      items: panier.items.map(item =>
         this.commandeItemRepository.create({
           menu: item.menu,
           quantity: item.quantity,
@@ -50,13 +43,12 @@ export class CommandeService {
       ),
     });
 
-    // Sauvegarde
     const savedCommande = await this.commandeRepository.save(commande);
 
-    // Validation du panier
     panier.isValidated = true;
-    await this.panierRepository.save(panier);
+await this.panierService.savePanier(panier); // plus d'erreur
 
-    return savedCommande;
+    return { success: true, message: 'Commande validée avec succès !', commande: savedCommande };
   }
 }
+

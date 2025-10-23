@@ -24,16 +24,30 @@ export class AuthService {
     if (dto.role && !allowedRoles.includes(dto.role)) {
       throw new BadRequestException('Rôle invalide');
     }
+    let entrepriseName: string | undefined
+    if (dto.role === 'employee'){
+      if(!dto.nomEntreprise){
+              throw new BadRequestException("Le nom de l'entreprise est obligatoire pour un employé");
 
+      }
+       const entreprise = await this.userRepo.findOne({
+      where:{nomEntreprise:dto.nomEntreprise, role:'entreprise'}
+    });
+    if(!entreprise){
+      throw new BadRequestException("L'entreprise choisie n'existe pas")
+    }
+entrepriseName=entreprise.nomEntreprise;
+
+    }
+   
     const hashedPassword = await bcrypt.hash(dto.password, 10);
 
     const user = this.userRepo.create({
       email: dto.email,
       password: hashedPassword,
       nom: dto.nom || 'inconnu',
-      nomEntreprise: dto.nomEntreprise,
+      nomEntreprise: dto.role === 'entreprise' ? dto.nomEntreprise:entrepriseName,
       role: dto.role || 'employee',
-      entrepriseId: dto.entrepriseId,
     });
 
     await this.userRepo.save(user);
