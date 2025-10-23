@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import SidebarAdmin from "../sideBar/page";
+import SidebarAdmin from "../../components/sideBar/sidebarAdmin";
 import DashboardCards from "../counter/page";
 import AdminNavbar from "../navbarAdmin/page";
 

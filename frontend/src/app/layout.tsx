@@ -4,7 +4,6 @@ import "./globals.css";
 import { Toaster } from "react-hot-toast";
 import { UserProvider } from "../components/context/userContext";
 import { PanierProvider } from "../components/context/panierContext";
-import NavbarEmployer from "./navbarEmployer/page";
 
 
 const inter = Inter({ subsets: ['latin'] });

@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import DashboardLayout from "../dashboard/page";
 
 type User = {
   id: number;
@@ -48,7 +47,6 @@ export default function EntreprisesListe() {
   if (error) return <p className="text-center mt-10 text-red-500">{error}</p>;
 
   return (
-    <DashboardLayout>
     <div className="max-w-5xl mx-auto mt-10 p-4 text-sm">
       <h2 className="text-xl font-semibold text-[#F28C28] mb-4">
         Liste des Employes
@@ -81,6 +79,5 @@ export default function EntreprisesListe() {
       </table>
    
     </div>
-    </DashboardLayout>
   );
 }

@@ -57,7 +57,7 @@ export default function MenuDuJour() {
                     {menu.image ? (
                       <Image src={menu.image} alt={menu.nom} fill className="object-cover transition-transform duration-700 hover:scale-110" />
                     ) : (
-                      <div className="w-full h-full flex items-center justify-center bg-gray-200 text-gray-400">Pas d'image</div>
+                      <div className="w-full h-full flex items-center justify-center bg-gray-200 text-gray-400">Pas {" d'image"}</div>
                     )}
                   </div>
                   <CardHeader>

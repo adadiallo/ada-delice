@@ -1,7 +1,7 @@
 "use client";
 import { useState } from "react";
 import { FiPlus, FiEdit, FiTrash } from "react-icons/fi";
-import DashboardLayout from "../dashboard/page";
+import DashboardLayout from "../dashboard/layout";
 
 type Menu = {
   id: number;
