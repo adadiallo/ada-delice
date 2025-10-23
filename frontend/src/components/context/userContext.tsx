@@ -31,35 +31,43 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
 
   useEffect(() => {
     const token = localStorage.getItem("token");
-
     if (!token) {
       setLoading(false);
       return;
     }
 
-    fetch("http://localhost:3000/auth/profile", {
-      headers: { Authorization: `Bearer ${token}` },
-    })
-      .then(async (res) => {
-        if (res.ok) {
-          const data = await res.json();
-          setUser(data);
-        } else {
+    const fetchProfile = async () => {
+      try {
+        const res = await fetch("http://localhost:3000/auth/profile", {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        if (!res.ok) {
           localStorage.removeItem("token");
           setUser(null);
+          return;
         }
-      })
-      .catch(() => {
+        const data = await res.json();
+        setUser({
+          userId: data.id,
+          email: data.email,
+          role: data.role,
+        });
+      } catch (err) {
+        console.error(err);
         localStorage.removeItem("token");
         setUser(null);
-      })
-      .finally(() => setLoading(false));
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProfile();
   }, []);
 
   const logout = () => {
     localStorage.removeItem("token");
     setUser(null);
-    router.push("/login"); 
+    router.push("/login");
   };
 
   return (

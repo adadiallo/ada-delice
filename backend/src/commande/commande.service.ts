@@ -6,6 +6,7 @@ import { CommandeItem } from "./entites/commande-item.entity";
 import { Panier } from "src/panier/entities/panier.entity";
 import { User } from "src/user/entities/user.entity";
 import { PanierService } from "src/panier/panier.service";
+import { CreateCommandeDto } from "./dto/create-commande.dto";
 
 @Injectable()
 export class CommandeService {
@@ -19,7 +20,7 @@ export class CommandeService {
     private userRepository: Repository<User>,
   ) {}
 
-  async createCommande(userId: number) {
+  async createCommande(userId: number, createCommandeDto: CreateCommandeDto) {
     const user = await this.userRepository.findOne({ where: { id: userId } });
     if (!user) throw new NotFoundException('Utilisateur non trouvé');
 

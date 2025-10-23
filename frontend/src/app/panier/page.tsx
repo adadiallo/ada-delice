@@ -11,7 +11,6 @@ export default function PanierPage() {
   return (
     <>
       <NavbarEmployer />
-
       <div className="max-w-6xl mx-auto p-6 mt-20">
         <h1 className="text-4xl font-bold mb-8 text-center text-gray-800">Mon Panier</h1>
 
@@ -22,7 +21,7 @@ export default function PanierPage() {
         ) : (
           <>
             <div className="grid gap-6">
-              {panier.map((item) => (
+              {panier.map(item => (
                 <div key={item.id} className="flex flex-col md:flex-row items-center md:justify-between bg-white shadow-md rounded-lg p-4">
                   <div className="flex items-center gap-4">
                     <Image src={item.image} alt={item.nom} width={80} height={80} className="rounded object-cover" />
@@ -57,7 +56,6 @@ export default function PanierPage() {
           </>
         )}
       </div>
-
       <Footer />
     </>
   );

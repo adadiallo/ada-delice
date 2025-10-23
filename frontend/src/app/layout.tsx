@@ -23,13 +23,13 @@ export default function RootLayout({
     <html lang="en">
            <body className={inter.className}>
 
-                <UserProvider>
-<PanierProvider>
-        {children}
-        </PanierProvider>
+    <UserProvider>
+          <PanierProvider>
+            {children}
+            <Toaster position="top-right" />
+          </PanierProvider>
         </UserProvider>
       
-                  <Toaster position="top-center" reverseOrder={false} />
 
       </body>
     </html>
