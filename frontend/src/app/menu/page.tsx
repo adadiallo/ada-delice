@@ -84,7 +84,7 @@ export default function MenuDuJour() {
 
   return (
     <>
-      {/* <NavbarEmployer /> */}
+      <NavbarEmployer />
 
       <div className="mt-10 min-h-screen bg-gray-100 px-6 md:px-20 py-12">
         <h2 className="text-4xl font-extrabold text-center text-gray-800 mb-6">
