@@ -1,40 +1,44 @@
 "use client";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { useUser } from "../../components/context/userContext";
 import Link from "next/link";
 import toast from "react-hot-toast";
+import api from "../../../utils/api";
+import axios from "axios";
+import { useUser } from "../../../context/userContext";
 
 export default function LoginPage() {
   const [formData, setFormData] = useState({ email: "", password: "" });
-  const { setUserContext } = useUser(); 
+  const { setUser } = useUser(); 
   const router = useRouter();
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+  // 🔹 Mise à jour des champs du formulaire
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  ) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
+  // 🔹 Soumission du formulaire
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     try {
-      const res = await fetch("http://localhost:3000/auth/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
-      });
+      // ✅ Appel API avec axios
+      const res = await api.post("http://localhost:3000/auth/login", formData);
+      const data = res.data;
 
-      const data = await res.json();
-
-      if (!res.ok) {
-        return alert(data.message || "Erreur de connexion");
-      }
-
-      // ✅ Stocker le token
+      // ✅ Stocker le token JWT
       localStorage.setItem("token", data.access_token);
 
       // ✅ Mettre à jour le contexte utilisateur
-      setUserContext(data.user);
+setUser({
+  userId: data.user.id,  // prendre `id` et le mapper sur `userId`
+  email: data.user.email,
+  role: data.user.role,
+});
+
+      toast.success("Connexion réussie !");
 
       // ✅ Redirection selon le rôle
       if (data.user.role === "admin") {
@@ -42,25 +46,29 @@ export default function LoginPage() {
       } else if (data.user.role === "entreprise") {
         router.push("/");
       } else {
-        // employé
         router.push("/menu");
       }
+    } catch (err: unknown) {
+  console.error(err);
 
-    } catch (err) {
-      console.error(err);
-      alert("Erreur lors de la connexion");
-    }
+  if (axios.isAxiosError(err)) {
+    // ✅ Type sécurisé, reconnu par TypeScript
+    const message = err.response?.data?.message || "Erreur lors de la connexion";
+    toast.error(message);
+  } else {
+    toast.error("Une erreur inconnue s'est produite");
+  }
+}
+
   };
 
-
+  // 🔹 Affichage du formulaire
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-100">
       <div className="w-full max-w-md bg-white rounded-2xl shadow p-6">
         <h1 className="text-2xl font-bold mb-6 text-center">Connexion</h1>
 
         <form onSubmit={handleSubmit} className="space-y-4">
-          
-
           <input
             type="email"
             name="email"
@@ -87,10 +95,14 @@ export default function LoginPage() {
           >
             Se connecter
           </button>
-
         </form>
-                        <p className="mt-4 text-center">Vous {" n'avez"} pas de compte  <Link href='/register' className="text-[#F28C28]">{"s'inscrire"} ?</Link> </p>
 
+        <p className="mt-4 text-center">
+          Vous {" n'avez"} pas de compte ?{" "}
+          <Link href="/register" className="text-[#F28C28]">
+            {"S'inscrire"}
+          </Link>
+        </p>
       </div>
     </div>
   );

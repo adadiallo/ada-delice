@@ -7,7 +7,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { MdOutlinePerson } from "react-icons/md";
 import { LuLogOut } from "react-icons/lu";
-import { useUser } from "../../components/context/userContext";
+import { useUser } from "../../../context/userContext";
 import Link from "next/link";
 
 export default function AdminNavbar() {

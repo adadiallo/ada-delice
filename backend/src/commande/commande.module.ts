@@ -3,14 +3,13 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { CommandeService } from './commande.service';
 import { CommandeController } from './commande.controller';
-import { Panier } from 'src/panier/entities/panier.entity';
 import { User } from 'src/user/entities/user.entity';
 import { Commande } from './entites/commande.entity';
-import { CommandeItem } from './entites/commande-item.entity';
+import { PanierItem } from 'src/panier/entities/panier-item.entity';
 
 @Module({
   controllers: [CommandeController],
   providers: [CommandeService],
-  imports: [TypeOrmModule.forFeature([Commande, CommandeItem, Panier, User])],
+  imports: [TypeOrmModule.forFeature([Commande, PanierItem, User])],
 })
 export class CommandeModule {}

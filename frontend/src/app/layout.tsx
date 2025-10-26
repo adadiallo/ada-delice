@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "react-hot-toast";
-import { UserProvider } from "../components/context/userContext";
-import { PanierProvider } from "../components/context/panierContext";
+import { UserProvider } from "../../context/userContext";
+import { CartProvider } from "../../context/panierContext";
 
 
 const inter = Inter({ subsets: ['latin'] });
@@ -23,10 +23,10 @@ export default function RootLayout({
            <body className={inter.className}>
 
     <UserProvider>
-          <PanierProvider>
+          <CartProvider>
             {children}
             <Toaster position="top-right" />
-          </PanierProvider>
+          </CartProvider>
         </UserProvider>
       
 

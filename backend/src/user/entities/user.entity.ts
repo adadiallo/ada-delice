@@ -1,5 +1,5 @@
 import { Commande } from 'src/commande/entites/commande.entity';
-import { Panier } from 'src/panier/entities/panier.entity';
+import { PanierItem } from 'src/panier/entities/panier-item.entity';
 import { Column, Entity, PrimaryGeneratedColumn, OneToMany } from 'typeorm';
 
 export type UserRole = 'entreprise' | 'employee' | 'admin';
@@ -31,8 +31,8 @@ export class User {
   @Column({ nullable: true })
   entrepriseId: number;
 
-  @OneToMany(() => Panier, (panier) => panier.user)
-  paniers: Panier[];
+ @OneToMany(() => PanierItem, (panier) => panier.user)
+  paniers: PanierItem[];
   @OneToMany(() => Commande ,(commande) => commande.user )
   commandes:Commande
 }

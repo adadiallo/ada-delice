@@ -1,33 +1,51 @@
-import { Controller, Post, Body, Get, Param, Patch, Delete } from '@nestjs/common';
+import { Controller, Post, Body, UseGuards, Req, Get, Param, Delete, ParseIntPipe, Patch } from '@nestjs/common';
+import { AuthGuard } from '@nestjs/passport';
 import { PanierService } from './panier.service';
-import { CreatePanierDto } from './dto/create-panier.dto';
 
 @Controller('panier')
 export class PanierController {
-  constructor(private readonly panierService: PanierService) {}
+  constructor(private panierService: PanierService) {}
 
-  @Post()
-  create(@Body() createPanierDto: CreatePanierDto) {
-    return this.panierService.create(createPanierDto);
+  @UseGuards(AuthGuard('jwt'))
+  @Post('add')
+  async addToCart(
+    @Req() req,
+    @Body() body: { menuId: number; quantite: number }
+  ) {
+    const userId = req.user.userId; // récupéré depuis le token JWT
+    return this.panierService.addToCart(userId, body.menuId, body.quantite);
   }
 
-  @Get(':userId')
-  getByUser(@Param('userId') userId: number) {
-    return this.panierService.getByUser(userId);
+  @UseGuards(AuthGuard('jwt'))
+  @Get()
+  async getCart(@Req() req) {
+    const userId = req.user.userId;
+    return this.panierService.getCart(userId);
   }
+@UseGuards(AuthGuard('jwt'))
+@Patch('update')
+async updateQuantite(
+  @Req() req,
+  @Body() body: { menuId: number; quantite: number }
+) {
+  const userId = req.user.userId;
+  return this.panierService.updateQuantite(userId, body.menuId, body.quantite);
+}
 
-  @Patch('validate/:panierId')
-  validate(@Param('panierId') panierId: number) {
-    return this.panierService.validatePanier(panierId);
-  }
+ @UseGuards(AuthGuard('jwt'))
+@Delete('remove/:id')
+async removeFromCart(
+  @Req() req,
+  @Param('id', ParseIntPipe) menuId: number
+) {
+  const userId = req.user.userId;
+  return this.panierService.removeFromCart(userId,menuId);
+}
 
-  @Patch('update-item/:itemId/:quantity')
-  updateItem(@Param('itemId') itemId: number, @Param('quantity') quantity: number) {
-    return this.panierService.updateQuantity(itemId, quantity);
-  }
-
-  @Delete('remove-item/:itemId')
-  removeItem(@Param('itemId') itemId: number) {
-    return this.panierService.removeItem(itemId);
-  }
+  @UseGuards(AuthGuard('jwt'))
+@Get('count')
+async getCartItemCount(@Req() req) {
+  const userId = req.user.userId;
+  return this.panierService.getCartItemCount(userId);
+}
 }

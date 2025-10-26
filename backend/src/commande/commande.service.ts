@@ -1,55 +1,51 @@
-import { Injectable, NotFoundException } from "@nestjs/common";
-import { InjectRepository } from "@nestjs/typeorm";
-import { Commande } from "./entites/commande.entity";
-import { Repository } from "typeorm";
-import { CommandeItem } from "./entites/commande-item.entity";
-import { Panier } from "src/panier/entities/panier.entity";
-import { User } from "src/user/entities/user.entity";
-import { PanierService } from "src/panier/panier.service";
-import { CreateCommandeDto } from "./dto/create-commande.dto";
+import { Injectable, BadRequestException } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { Commande } from './entites/commande.entity';
+import { PanierItem } from 'src/panier/entities/panier-item.entity';
 
 @Injectable()
 export class CommandeService {
   constructor(
     @InjectRepository(Commande)
-    private commandeRepository: Repository<Commande>,
-    @InjectRepository(CommandeItem)
-    private commandeItemRepository: Repository<CommandeItem>,
-    private panierService: PanierService, // on utilise le service panier
-    @InjectRepository(User)
-    private userRepository: Repository<User>,
+    private commandeRepo: Repository<Commande>,
+    @InjectRepository(PanierItem)
+    private panierRepo: Repository<PanierItem>,
   ) {}
 
-  async createCommande(userId: number, createCommandeDto: CreateCommandeDto) {
-    const user = await this.userRepository.findOne({ where: { id: userId } });
-    if (!user) throw new NotFoundException('Utilisateur non trouvé');
-
-    const panier = await this.panierService.getOrCreatePanier(userId);
-
-    if (!panier.items || panier.items.length === 0) {
-      return { success: false, message: 'Votre panier est vide', commande: null };
-    }
-
-    const total = panier.items.reduce((sum, i) => sum + Number(i.menu.prix) * i.quantity, 0);
-
-    const commande = this.commandeRepository.create({
-      user: { id: userId },
-      total,
-      items: panier.items.map(item =>
-        this.commandeItemRepository.create({
-          menu: item.menu,
-          quantity: item.quantity,
-          prix: item.menu.prix,
-        }),
-      ),
+  async validerCommande(userId: number,currency: string) {
+    const panier = await this.panierRepo.find({
+      where: { user: { id: userId } },
+      relations: ['menu'],
     });
 
-    const savedCommande = await this.commandeRepository.save(commande);
+    if (!panier.length) {
+      throw new BadRequestException('Votre panier est vide');
+    }
 
-    panier.isValidated = true;
-await this.panierService.savePanier(panier); // plus d'erreur
+    const total = panier.reduce(
+      (acc, item) => acc + item.menu.prix * item.quantite,
+      0,
+    );
 
-    return { success: true, message: 'Commande validée avec succès !', commande: savedCommande };
+    const commande = this.commandeRepo.create({
+      user: { id: userId },
+      menus: panier.map((item) => ({
+        menu: item.menu,
+        quantite: item.quantite,
+      })),
+      total,
+      statut: 'en attente',
+    });
+
+    await this.commandeRepo.save(commande);
+
+    await this.panierRepo.delete({ user: { id: userId } });
+
+   
+
+    return {
+      commande,
+    };
   }
 }
-

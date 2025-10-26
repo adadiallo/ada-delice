@@ -7,23 +7,33 @@ import { MenuEmployerModule } from './menu-employer/menu-employer.module';
 import { MenuEmployer } from './menu-employer/entities/menu-employer.entity';
 import { CloudinaryService } from './cloudinary/cloudinary.service';
 import { PanierModule } from './panier/panier.module';
-import { Panier } from './panier/entities/panier.entity';
 import { PanierItem } from './panier/entities/panier-item.entity';
 import { CommandeModule } from './commande/commande.module';
 import { Commande } from './commande/entites/commande.entity';
-import { CommandeItem } from './commande/entites/commande-item.entity';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 
 @Module({
   imports: [
-    TypeOrmModule.forRoot({
+    // 🔧 Chargement des variables .env
+    ConfigModule.forRoot({
+      isGlobal: true, // 👈 rend disponible dans toute l'application
+    }),
+
+    // ⚙️ Connexion à la base PostgreSQL
+    TypeOrmModule.forRootAsync({
+      imports: [ConfigModule],
+      useFactory: (configService: ConfigService) => ({
       type: 'postgres',
-      host: 'localhost', 
-      port: 5432,
-      username: 'postgres',
-      password: 'adminPassword',
-      database: 'restaurant',
-      entities: [User,MenuEmployer,Panier,PanierItem,Commande,CommandeItem],
+      host: configService.get<string>('DATABASE_HOST'),
+        port: configService.get<number>('DATABASE_PORT'),
+        username: configService.get<string>('DATABASE_USER'),
+        password: configService.get<string>('DATABASE_PASSWORD'),
+        database: configService.get<string>('DATABASE_NAME'),
+      entities: [User,MenuEmployer,PanierItem,Commande],
       synchronize: true, 
+      
+      }),
+      inject: [ConfigService],
     }),
     AuthModule,
     UserModule,

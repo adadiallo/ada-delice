@@ -1,16 +1,16 @@
-import { Controller, Post, Param, Body, ParseIntPipe } from '@nestjs/common';
+import { Controller, Post, UseGuards, Req, Body } from '@nestjs/common';
+import { AuthGuard } from '@nestjs/passport';
 import { CommandeService } from './commande.service';
-import { CreateCommandeDto } from './dto/create-commande.dto';
 
-@Controller('commande')
+@Controller('commandes')
 export class CommandeController {
-  constructor(private readonly commandeService: CommandeService) {}
+  constructor(private commandeService: CommandeService) {}
 
-  @Post(':userId')
-  create(
-    @Param('userId', ParseIntPipe) userId: number,
-    @Body() createCommandeDto: CreateCommandeDto
-  ) {
-    return this.commandeService.createCommande(userId, createCommandeDto);
+  @UseGuards(AuthGuard('jwt'))
+  @Post('valider')
+  async validerCommande(@Req() req, @Body('currency') currency: string) {
+    const userId = req.user.userId;
+    return this.commandeService.validerCommande(userId, currency);
   }
 }
+

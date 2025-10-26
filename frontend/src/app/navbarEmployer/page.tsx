@@ -2,7 +2,7 @@
 
 import { LuLogOut, LuShoppingCart } from "react-icons/lu";
 import { MdOutlinePerson } from "react-icons/md";
-import { useUser } from "../../components/context/userContext";
+import { useUser } from "../../../context/userContext";
 import Image from "next/image";
 import Link from "next/link";
 import {
@@ -11,42 +11,39 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { usePanier } from "../../components/context/panierContext";
+import { useCart } from "../../../context/panierContext";
 
 export default function NavbarEmployer() {
   const { user, loading, logout } = useUser();
-const { panier } = usePanier();
+  const { count } = useCart(); 
 
   if (loading) return null;
 
   return (
     <nav className="fixed top-0 left-0 w-full z-50 bg-white shadow-md px-6 py-4 flex justify-between items-center">
-      
+      {/* Logo */}
       <div className="flex items-center space-x-2">
-           <Link href={'/'}> <Image
-              src="/logo.png"
-              alt="Logo"
-              width={60}
-              height={60}
-              aria-label="Logo de l'entreprise"
-            /></Link>
-        
+        <Link href="/">
+          <Image
+            src="/logo.png"
+            alt="Logo"
+            width={60}
+            height={60}
+            aria-label="Logo de l'entreprise"
+          />
+        </Link>
       </div>
 
-      {/* Partie droite : panier + menu utilisateur */}
       <div className="flex items-center gap-4">
-        {/* Panier */}
         <Link href="/panier" className="relative flex items-center text-[#0c5e69]">
           <LuShoppingCart size={24} />
-        {panier.length > 0 && (
-  <span className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full text-xs w-5 h-5 flex items-center justify-center">
-    {panier.length}
-  </span>
-)}
-
+          {count >= 0 && ( 
+            <span className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full text-xs w-5 h-5 flex items-center justify-center">
+              {count}
+            </span>
+          )}
         </Link>
 
-        {/* Menu utilisateur */}
         {user && (
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
@@ -60,7 +57,10 @@ const { panier } = usePanier();
 
             <DropdownMenuContent className="w-44">
               <div className="px-4 py-2 font-medium border-b">{user.email}</div>
-              <DropdownMenuItem onClick={logout} className="flex gap-2 items-center">
+              <DropdownMenuItem
+                onClick={logout}
+                className="flex gap-2 items-center cursor-pointer"
+              >
                 <LuLogOut size={18} />
                 Déconnexion
               </DropdownMenuItem>
