@@ -1,5 +1,8 @@
 import api from "../utils/api";
-
+export type LoginData = {
+  email: string;
+  password: string;
+};
 // 🔹 Récupérer la liste des entreprises
 export const getEntreprises = async () => {
   const response = await api.get("/user/entreprises");
@@ -17,3 +20,7 @@ export const registerUser = async (data: {
   const response = await api.post("/auth/register", data);
   return response.data;
 };
+ export const loginUser = async (data: LoginData) => {
+  const res = await api.post("auth/login", data);
+  return res.data
+ }
