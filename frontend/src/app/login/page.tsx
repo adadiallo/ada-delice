@@ -22,7 +22,7 @@ export default function LoginPage() {
     try {
       // ✅ Appel du service
       const data = await loginUser(formData);
-
+console.log("donnees",data)
       // ✅ Stocker le token JWT
       localStorage.setItem("token", data.access_token);
 
@@ -59,7 +59,7 @@ export default function LoginPage() {
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-100">
       <div className="w-full max-w-md bg-white rounded-2xl shadow p-6">
-        <h1 className="text-2xl font-bold mb-6 text-center">Connexion</h1>
+        <h1 className="text-2xl font-bold mb-6 text-center ">Connexion</h1>
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <input

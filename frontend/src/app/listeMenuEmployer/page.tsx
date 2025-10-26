@@ -3,16 +3,7 @@ import { useEffect, useState } from "react";
 import { FiPlus, FiEdit, FiTrash } from "react-icons/fi";
 import Image from "next/image";
 import DashboardLayout from "../dashboard/layout";
-
-type MenuEmployer = {
-  id: number;
-  type: "petit_dejeuner" | "repas";
-  nom: string;
-  prix: number;
-  description: string;
-  jour?: string;
-  image?: string;
-};
+import { MenuEmployer, getMenus, createMenu, updateMenu,deleteMenu} from "../../../services/menuService";
 
 export default function MenuEmployerManager() {
   const [menus, setMenus] = useState<MenuEmployer[]>([]);
@@ -34,8 +25,7 @@ export default function MenuEmployerManager() {
 
   const fetchMenuEmployer = async () => {
     try {
-      const res = await fetch("http://localhost:3000/menu-employer");
-      const data = await res.json();
+      const data = await getMenus();
       setMenus(data);
     } catch (error) {
       console.error("Erreur fetch:", error);
@@ -43,108 +33,89 @@ export default function MenuEmployerManager() {
   };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) setForm((prev) => ({ ...prev, imageFile: file }));
+    const file = e.target.files?.[0] || null;
+    setForm((prev) => ({ ...prev, imageFile: file }));
   };
 
   const handleChange = (
-    e: React.ChangeEvent<
-      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
-    >
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
   ) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
- 
-const handleSubmit = async (e: React.FormEvent) => {
-  e.preventDefault();
-  const token = localStorage.getItem("token");
-
-  if (!token) {
-    alert("Vous devez être connecté pour ajouter un menu");
-    return;
-  }
-
-  try {
-    const formData = new FormData();
-    formData.append("nom", form.nom);
-    formData.append("description", form.description);
-    formData.append("prix", form.prix);
-    formData.append("type", form.type);
-    if (form.jour) formData.append("jour", form.jour);
-    if (form.imageFile) formData.append("image", form.imageFile);
-
-    let url = "http://localhost:3000/menu-employer";
-    let method: "POST" | "PATCH" = "POST";
-
-    if (selectedMenu) {
-      url = `http://localhost:3000/menu-employer/${selectedMenu.id}`;
-      method = "PATCH";
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const token = localStorage.getItem("token");
+    if (!token) {
+      alert("Vous devez être connecté pour ajouter/modifier un menu");
+      return;
     }
 
-    const res = await fetch(url, {
-      method,
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-      body: formData,
-    });
+    try {
+      const formDataObj = new FormData();
+      formDataObj.append("nom", form.nom);
+      formDataObj.append("description", form.description);
+      formDataObj.append("prix", form.prix);
+      formDataObj.append("type", form.type);
+      if (form.jour) formDataObj.append("jour", form.jour);
+      if (form.imageFile) formDataObj.append("image", form.imageFile);
 
-    if (!res.ok) {
-      const errorData = await res.json();
-      throw new Error(errorData.message || "Erreur lors de la sauvegarde");
+      let data: MenuEmployer;
+
+      if (selectedMenu) {
+        data = await updateMenu(selectedMenu.id, formDataObj);
+        setMenus(menus.map((m) => (m.id === data.id ? data : m)));
+      } else {
+        data = await createMenu(formDataObj);
+        setMenus([...menus, data]);
+      }
+
+      setShowModal(false);
+      setSelectedMenu(null);
+      setForm({
+        nom: "",
+        description: "",
+        prix: "",
+        type: "petit_dejeuner",
+        jour: "",
+        imageFile: null,
+      });
+    } catch (error) {
+      console.error("Erreur submit:", error);
+      alert("Erreur lors de la sauvegarde du menu");
     }
-
-    const data = await res.json();
-    console.log("Menu créé/modifié:", data);
-
-    // Met à jour la liste localement
-    if (selectedMenu) {
-      setMenus(menus.map((m) => (m.id === data.id ? data : m)));
-    } else {
-      setMenus([...menus, data]);
-    }
-
-    // Reset formulaire
-    setShowModal(false);
-    setSelectedMenu(null);
-    setForm({
-      nom: "",
-      description: "",
-      prix: "",
-      type: "petit_dejeuner",
-      jour: "",
-      imageFile: null,
-    });
-  } catch (error) {
-    console.error("Erreur submit:", error);
-  }
-};
-
-
+  };
 
   const handleDelete = async (id: number) => {
-    const token = localStorage.getItem("token");
+    if (!confirm("Voulez-vous vraiment supprimer ce menu ?")) return;
+
     try {
-      const res = await fetch(`http://localhost:3000/menu-employer/${id}`, {
-        method: "DELETE",
-        // headers: { Authorization: `Bearer ${token}` },
-      });
-      if (res.ok) {
-        setMenus(menus.filter((m) => m.id !== id));
-      }
+      await deleteMenu(id);
+      setMenus(menus.filter((m) => m.id !== id));
     } catch (error) {
       console.error("Erreur delete:", error);
+      alert("Impossible de supprimer le menu");
     }
+  };
+
+  const openEditModal = (menu: MenuEmployer) => {
+    setSelectedMenu(menu);
+    setForm({
+      type: menu.type,
+      nom: menu.nom,
+      prix: menu.prix.toString(),
+      description: menu.description,
+      jour: menu.jour || "",
+      imageFile: null,
+    });
+    setShowModal(true);
   };
 
   return (
     <DashboardLayout>
       <div className="max-w-6xl mx-auto mt-10 p-4 text-sm">
         <div className="flex justify-between items-center mb-4">
-          <h2 className="text-xl font-semibold text-[#F28C28]">
-            Liste des Menus
-          </h2>
+          <h2 className="text-xl font-semibold text-[#F28C28]">Liste des Menus</h2>
           <button
             onClick={() => setShowModal(true)}
             className="bg-[#F28C28] text-white px-4 py-2 rounded flex items-center gap-2 cursor-pointer"
@@ -171,21 +142,19 @@ const handleSubmit = async (e: React.FormEvent) => {
               <tr key={menu.id} className="border-t hover:bg-orange-50">
                 <td className="p-2">
                   <div className="w-12 h-12 rounded overflow-hidden border">
- {menu.image ? (
-  <Image
-  src={menu.image}
-        alt={menu.nom}
-        width={100}
-        height={100}
-        className="object-cover w-full h-full"
-  />
- ) : (
-  <div className="w-full h-full flex items-center justify-center text-gray-400 text-xs">
-        Aucune
-      </div>
- )
-}
-
+                    {menu.image ? (
+                      <Image
+                        src={menu.image}
+                        alt={menu.nom}
+                        width={100}
+                        height={100}
+                        className="object-cover w-full h-full"
+                      />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center text-gray-400 text-xs">
+                        Aucune
+                      </div>
+                    )}
                   </div>
                 </td>
                 <td className="p-2 capitalize">{menu.type}</td>
@@ -194,27 +163,10 @@ const handleSubmit = async (e: React.FormEvent) => {
                 <td className="p-2">{menu.description}</td>
                 <td className="p-2">{menu.jour}</td>
                 <td className="p-2 flex gap-2">
-                  <button
-                    onClick={() => {
-                      setSelectedMenu(menu);
-                      setForm({
-                        type: menu.type,
-                        nom: menu.nom,
-                        prix: menu.prix.toString(),
-                        jour: menu.jour || "",
-                        description: menu.description,
-                        imageFile: null,
-                      });
-                      setShowModal(true);
-                    }}
-                    className="text-blue-500 hover:text-blue-700"
-                  >
+                  <button onClick={() => openEditModal(menu)} className="text-blue-500 hover:text-blue-700">
                     <FiEdit />
                   </button>
-                  <button
-                    onClick={() => handleDelete(menu.id)}
-                    className="text-red-500 hover:text-red-700"
-                  >
+                  <button onClick={() => handleDelete(menu.id)} className="text-red-500 hover:text-red-700">
                     <FiTrash />
                   </button>
                 </td>
@@ -275,7 +227,6 @@ const handleSubmit = async (e: React.FormEvent) => {
                   onChange={handleChange}
                   className="border border-gray-300 p-2 rounded"
                 />
-
                 <input
                   type="file"
                   accept="image/*"
@@ -283,20 +234,11 @@ const handleSubmit = async (e: React.FormEvent) => {
                   className="border border-gray-300 p-2 rounded"
                 />
 
-              
-
                 <div className="flex justify-between mt-2">
-                  <button
-                    type="button"
-                    onClick={() => setShowModal(false)}
-                    className="px-4 py-2 border rounded"
-                  >
+                  <button type="button" onClick={() => setShowModal(false)} className="px-4 py-2 border rounded">
                     Annuler
                   </button>
-                  <button
-                    type="submit"
-                    className="bg-[#F28C28] text-white px-4 py-2 rounded cursor-pointer"
-                  >
+                  <button type="submit" className="bg-[#F28C28] text-white px-4 py-2 rounded cursor-pointer">
                     {selectedMenu ? "Mettre à jour" : "Enregistrer"}
                   </button>
                 </div>
