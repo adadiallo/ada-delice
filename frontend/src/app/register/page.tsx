@@ -1,6 +1,8 @@
 "use client";
 import Link from "next/link";
 import { useState, useEffect } from "react";
+import { getEntreprises, registerUser } from "../../../services/userService";
+import { AxiosError } from "axios";
 
 export default function RegisterPage() {
   const [role, setRole] = useState<"entreprise" | "employee">("entreprise");
@@ -14,9 +16,8 @@ export default function RegisterPage() {
 
   // 🔹 Charger la liste des entreprises
   useEffect(() => {
-    fetch("http://localhost:3000/user/entreprises")
-      .then((res) => res.json())
-      .then((data) => setEntreprises(data))
+    getEntreprises()
+      .then(setEntreprises)
       .catch((err) => console.error("Erreur chargement entreprises:", err));
   }, []);
 
@@ -38,22 +39,13 @@ export default function RegisterPage() {
     };
 
     try {
-      const res = await fetch("http://localhost:3000/auth/register", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(bodyData),
-      });
-
-      const data = await res.json();
-      if (!res.ok) {
-        return alert(`Erreur inscription: ${data.message}`);
-      }
-
+      await registerUser(bodyData);
       alert("Inscription réussie !");
     } catch (err) {
-      console.error(err);
-      alert("Erreur inscription");
-    }
+  const error = err as AxiosError<{ message?: string }>;
+  console.error(error);
+  alert("Erreur inscription : " + (error.response?.data?.message || "Une erreur est survenue"));
+}
   };
 
   return (
@@ -134,7 +126,8 @@ export default function RegisterPage() {
             type="submit"
             className="w-full bg-[#F28C28] text-white py-2 rounded-lg cursor-pointer transition"
           >
-{"            S'inscrire"}          </button>
+            {"            S'inscrire"}
+          </button>
         </form>
 
         <p className="text-center mt-4">

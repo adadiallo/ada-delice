@@ -1,8 +1,7 @@
 "use client";
 import Image from "next/image";
 import Link from "next/link";
-import Footer from "@/components/footer";
-import Navbar from "@/components/navbar";
+
 
 export default function PetitDejeunerPage() {
   const menus = [
@@ -26,7 +25,6 @@ export default function PetitDejeunerPage() {
 
   return (
     <>
-    <Navbar/>
     <section className="min-h-screen bg-gray-50 py-20 px-6 md:px-20">
       <div className="max-w-6xl mx-auto">
         {/* Titre */}
@@ -73,7 +71,6 @@ export default function PetitDejeunerPage() {
         </div>
       </div>
     </section>
-    <Footer/>
     </>
   );
 }
