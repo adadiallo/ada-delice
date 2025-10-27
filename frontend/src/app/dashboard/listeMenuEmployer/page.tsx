@@ -5,6 +5,7 @@ import Image from "next/image";
 import DashboardLayout from "../layout";
 import { MenuEmployer, getMenus, createMenu, updateMenu,deleteMenu} from "../../../../services/menuService";
 import toast from "react-hot-toast";
+import { ProtectedRoute } from "@/components/protectedRoe";
 
 export default function MenuEmployerManager() {
   const [menus, setMenus] = useState<MenuEmployer[]>([]);
@@ -119,6 +120,8 @@ export default function MenuEmployerManager() {
   };
 
   return (
+        <ProtectedRoute allowedRoles={["admin"]}>
+
       <div className="max-w-6xl mx-auto mt-10 p-4 text-sm">
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-xl font-semibold text-[#F28C28]">Liste des Menus</h2>
@@ -253,5 +256,6 @@ export default function MenuEmployerManager() {
           </div>
         )}
       </div>
+      </ProtectedRoute>
   );
 }

@@ -25,8 +25,18 @@ export default function RootLayout({
     <UserProvider>
           <CartProvider>
             {children}
-            <Toaster position="top-right" />
-          </CartProvider>
+<Toaster 
+  position="top-right" 
+  toastOptions={{
+    duration: 1000, 
+    error: {
+      style: {
+        background: '#ffebee', 
+        color: '#b71c1c',     
+      },
+    },
+  }}
+/>          </CartProvider>
         </UserProvider>
       
 

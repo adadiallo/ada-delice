@@ -39,7 +39,7 @@ export default function Navbar() {
           <div className="hidden md:flex items-center space-x-6">
             <NavLink href="/" pathname={pathname}>Accueil</NavLink>
             <NavLink href="/formules" pathname={pathname}>Formules</NavLink>
-            <NavLink href="/formulePetitDej" pathname={pathname}>Menus</NavLink>
+            <NavLink href="/menu" pathname={pathname}>Menus</NavLink>
             <NavLink href="/partenaire" pathname={pathname}>Nos Clients</NavLink>
           </div>
 
@@ -58,7 +58,7 @@ export default function Navbar() {
             <MobileLink href="/formules" pathname={pathname} setIsOpen={setIsOpen}>
               Formules
             </MobileLink>
-            <MobileLink href="/menus" pathname={pathname} setIsOpen={setIsOpen}>
+            <MobileLink href="/menu" pathname={pathname} setIsOpen={setIsOpen}>
               Menus
             </MobileLink>
             <MobileLink href="/clients" pathname={pathname} setIsOpen={setIsOpen}>

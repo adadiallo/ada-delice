@@ -3,43 +3,44 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import Link from "next/link";
 import toast from "react-hot-toast";
-import api from "../../../utils/api";
 import axios from "axios";
-import { useUser } from "../../../context/userContext";
+import { useUser } from "../../../context/userContext"; // Assurez-vous que le nom du hook est correct
 import { loginUser } from "../../../services/userService";
 
 export default function LoginPage() {
   const [formData, setFormData] = useState({ email: "", password: "" });
-  const { setUser } = useUser(); 
+  const [error, setError] = useState<string | null>(null);
+  const { setUser } = useUser();
   const router = useRouter();
 
   // 🔹 Mise à jour des champs du formulaire
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
+    // Réinitialise l'erreur lorsqu'un champ est modifié
+    setError(null); 
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
   // 🔹 Soumission du formulaire
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setError(null);
 
     try {
-      // ✅ Appel API avec axios
       const data = await loginUser( formData);
-console.log("donnees recues",data);
-      // ✅ Stocker le token JWT
+      console.log("donnees recues",data);
+
       localStorage.setItem("token", data.access_token);
 
-setUser({
-  userId: data.user.id,  
-  email: data.user.email,
-  role: data.user.role,
-});
+      setUser({
+        userId: data.user.id,
+        email: data.user.email,
+        role: data.user.role,
+      });
 
       toast.success("Connexion réussie !");
 
-      // ✅ Redirection selon le rôle
       if (data.user.role === "admin") {
         router.push("/dashboard/listeMenuEmployer");
       } else if (data.user.role === "entreprise") {
@@ -48,17 +49,20 @@ setUser({
         router.push("/menu");
       }
     } catch (err: unknown) {
-  console.error(err);
+      console.error(err);
 
-  if (axios.isAxiosError(err)) {
-    // ✅ Type sécurisé, reconnu par TypeScript
-    const message = err.response?.data?.message || "Erreur lors de la connexion";
-    toast.error(message);
-  } else {
-    toast.error("Une erreur inconnue s'est produite");
-  }
-}
-
+      if (axios.isAxiosError(err)) {
+        // 🚨 Capture le message d'erreur de NestJS et le stocke
+        const message = err.response?.data?.message || "Identifiants invalides ou serveur inaccessible.";
+        setError(message); 
+        
+        // Nous conservons le toast.error pour les notifications rapides
+        // toast.error(message); 
+      } else {
+        setError("Une erreur inconnue s'est produite.");
+        toast.error("Une erreur inconnue s'est produite");
+      }
+    }
   };
 
   // 🔹 Affichage du formulaire
@@ -88,6 +92,12 @@ setUser({
             required
           />
 
+          {error && (
+            <p className="text-red-600 text-sm font-medium pt-2">
+              {error}
+            </p>
+          )}
+          
           <button
             type="submit"
             className="w-full bg-[#F28C28] text-white py-2 rounded-lg cursor-pointer transition hover:bg-[#d6791e]"

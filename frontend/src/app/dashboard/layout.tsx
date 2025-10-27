@@ -4,6 +4,7 @@ import { useState } from "react";
 import SidebarAdmin from "../../components/sideBar/sidebarAdmin";
 import DashboardCards from "../counter/page";
 import AdminNavbar from "../navbarAdmin/page";
+import { ProtectedRoute } from "@/components/protectedRoe";
 
 
 
@@ -11,6 +12,8 @@ export default function DashboardLayout({ children }: { children?: React.ReactNo
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   return (
+            <ProtectedRoute allowedRoles={["admin"]}>
+    
     <div className="flex flex-col min-h-screen bg-gray-100">
       <AdminNavbar/>
         <button
@@ -38,5 +41,6 @@ export default function DashboardLayout({ children }: { children?: React.ReactNo
         </main>
       </div>
     </div>
+    </ProtectedRoute>
   );
 }
