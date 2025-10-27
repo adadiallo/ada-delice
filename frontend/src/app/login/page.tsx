@@ -3,35 +3,39 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import Link from "next/link";
 import toast from "react-hot-toast";
+import api from "../../../utils/api";
 import axios from "axios";
 import { useUser } from "../../../context/userContext";
 import { loginUser } from "../../../services/userService";
 
 export default function LoginPage() {
   const [formData, setFormData] = useState({ email: "", password: "" });
-  const { setUser } = useUser();
+  const { setUser } = useUser(); 
   const router = useRouter();
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  // 🔹 Mise à jour des champs du formulaire
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  ) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
+  // 🔹 Soumission du formulaire
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     try {
-      // ✅ Appel du service
-      const data = await loginUser(formData);
-console.log("donnees",data)
+      // ✅ Appel API avec axios
+      const data = await loginUser( formData);
+console.log("donnees recues",data);
       // ✅ Stocker le token JWT
       localStorage.setItem("token", data.access_token);
 
-      // ✅ Mettre à jour le contexte utilisateur
-      setUser({
-        userId: data.user.id,
-        email: data.user.email,
-        role: data.user.role,
-      });
+setUser({
+  userId: data.user.id,  
+  email: data.user.email,
+  role: data.user.role,
+});
 
       toast.success("Connexion réussie !");
 
@@ -44,22 +48,24 @@ console.log("donnees",data)
         router.push("/menu");
       }
     } catch (err: unknown) {
-      console.error(err);
+  console.error(err);
 
-      if (axios.isAxiosError(err)) {
-        const message =
-          err.response?.data?.message || "Erreur lors de la connexion";
-        toast.error(message);
-      } else {
-        toast.error("Une erreur inconnue s'est produite");
-      }
-    }
+  if (axios.isAxiosError(err)) {
+    // ✅ Type sécurisé, reconnu par TypeScript
+    const message = err.response?.data?.message || "Erreur lors de la connexion";
+    toast.error(message);
+  } else {
+    toast.error("Une erreur inconnue s'est produite");
+  }
+}
+
   };
 
+  // 🔹 Affichage du formulaire
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-100">
       <div className="w-full max-w-md bg-white rounded-2xl shadow p-6">
-        <h1 className="text-2xl font-bold mb-6 text-center ">Connexion</h1>
+        <h1 className="text-2xl font-bold mb-6 text-center">Connexion</h1>
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <input
@@ -91,9 +97,10 @@ console.log("donnees",data)
         </form>
 
         <p className="mt-4 text-center">
-          Vous {"n'avez"} pas de compte ?{" "}
+          Vous {" n'avez"} pas de compte ?{" "}
           <Link href="/register" className="text-[#F28C28]">
-{"            S'inscrire"}          </Link>
+            {"S'inscrire"}
+          </Link>
         </p>
       </div>
     </div>
