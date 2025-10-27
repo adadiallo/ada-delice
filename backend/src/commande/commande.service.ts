@@ -48,4 +48,11 @@ export class CommandeService {
       commande,
     };
   }
+
+ async getAllCommandes() {
+  return this.commandeRepo.find({
+    relations: ['user', 'menus', 'menus.menu'],
+  });
+}
+
 }

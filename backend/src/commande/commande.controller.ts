@@ -1,4 +1,4 @@
-import { Controller, Post, UseGuards, Req, Body } from '@nestjs/common';
+import { Controller, Post, UseGuards, Req, Body, Get } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { CommandeService } from './commande.service';
 
@@ -12,5 +12,11 @@ export class CommandeController {
     const userId = req.user.userId;
     return this.commandeService.validerCommande(userId, currency);
   }
+ @UseGuards() // si tu as un guard admin
+@Get('all')
+async getAllCommandes() {
+  return this.commandeService.getAllCommandes();
+}
+
 }
 

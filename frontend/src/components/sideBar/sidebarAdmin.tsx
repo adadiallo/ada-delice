@@ -6,10 +6,10 @@ export default function SidebarAdmin({ onLinkClick }: { onLinkClick: () => void 
   const pathname = usePathname();
 
   const links = [
-    { name: "Liste Menus", href: "/listeMenuEmployer" },
-    { name: "Liste Commandes", href: "/admin/commandes" },
-    { name: "Liste Entreprises", href: "/listeEntreprises" },
-        { name: "Liste Employes", href: "/employes" },
+    { name: "Liste Menus", href: "/dashboard/listeMenuEmployer" },
+    { name: "Liste Commandes", href: "/dashboard/commandes" },
+    { name: "Liste Entreprises", href: "/dashboard/listeEntreprises" },
+        { name: "Liste Employes", href: "/dashboard/employes" },
 
   ];
 

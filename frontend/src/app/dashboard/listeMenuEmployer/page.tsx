@@ -2,8 +2,9 @@
 import { useEffect, useState } from "react";
 import { FiPlus, FiEdit, FiTrash } from "react-icons/fi";
 import Image from "next/image";
-import DashboardLayout from "../dashboard/layout";
-import { MenuEmployer, getMenus, createMenu, updateMenu,deleteMenu} from "../../../services/menuService";
+import DashboardLayout from "../layout";
+import { MenuEmployer, getMenus, createMenu, updateMenu,deleteMenu} from "../../../../services/menuService";
+import toast from "react-hot-toast";
 
 export default function MenuEmployerManager() {
   const [menus, setMenus] = useState<MenuEmployer[]>([]);
@@ -65,9 +66,13 @@ export default function MenuEmployerManager() {
       if (selectedMenu) {
         data = await updateMenu(selectedMenu.id, formDataObj);
         setMenus(menus.map((m) => (m.id === data.id ? data : m)));
+                  toast.success('menu modifié')
+
       } else {
         data = await createMenu(formDataObj);
         setMenus([...menus, data]);
+                  toast.success('menu ajouté ')
+
       }
 
       setShowModal(false);
@@ -80,6 +85,7 @@ export default function MenuEmployerManager() {
         jour: "",
         imageFile: null,
       });
+
     } catch (error) {
       console.error("Erreur submit:", error);
       alert("Erreur lors de la sauvegarde du menu");
@@ -88,6 +94,7 @@ export default function MenuEmployerManager() {
 
   const handleDelete = async (id: number) => {
     if (!confirm("Voulez-vous vraiment supprimer ce menu ?")) return;
+          toast.success('menu supprimé')
 
     try {
       await deleteMenu(id);
@@ -112,7 +119,6 @@ export default function MenuEmployerManager() {
   };
 
   return (
-    <DashboardLayout>
       <div className="max-w-6xl mx-auto mt-10 p-4 text-sm">
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-xl font-semibold text-[#F28C28]">Liste des Menus</h2>
@@ -247,6 +253,5 @@ export default function MenuEmployerManager() {
           </div>
         )}
       </div>
-    </DashboardLayout>
   );
 }

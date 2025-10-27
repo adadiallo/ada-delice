@@ -10,11 +10,12 @@ import {
   CardTitle,
   CardDescription,
 } from "@/components/ui/card";
- // ✅ pour récupérer le token utilisateur
 import toast from "react-hot-toast";
 import { useCart } from "../../../context/panierContext";
 import { useUser } from "../../../context/userContext";
 import Footer from "@/components/footer";
+import api from "../../../utils/api";
+import { AxiosError } from "axios";
 
 type MenuEmployer = {
   id: number;
@@ -31,14 +32,17 @@ export default function MenuDuJour() {
   const { refreshCount } = useCart();
   const { user } = useUser();
 
-  // 🔹 Récupération des menus depuis le backend
   const fetchMenus = async () => {
     try {
-      const response = await fetch("http://localhost:3000/menu-employer");
-      const data = await response.json();
-      setMenus(data);
-    } catch (error) {
-      console.error("Erreur fetch menus:", error);
+      const res = await api.get<MenuEmployer[]>("/menu-employer");
+      setMenus(res.data);
+    } catch (err) {
+      if (err instanceof AxiosError) {
+        toast.error(err.response?.data?.message || "Erreur lors du chargement des menus");
+      } else {
+        toast.error("Erreur inconnue lors du chargement des menus");
+      }
+      console.error("Erreur fetch menus:", err);
     }
   };
 
@@ -46,34 +50,19 @@ export default function MenuDuJour() {
     fetchMenus();
   }, []);
 
-  // 🔹 Fonction pour ajouter au panier (via API NestJS)
   const addToPanier = async (menuId: number, quantite: number = 1) => {
-    const token = localStorage.getItem("token");
-    if (!token) {
-      toast.error("Veuillez vous connecter avant d'ajouter au panier !");
-      return;
-    }
-
     try {
-      const res = await fetch("http://localhost:3000/panier/add", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({ menuId, quantite }),
-      });
-
-      if (res.ok) {
-        toast.success("Ajouté au panier !");
-        refreshCount(); // ✅ met à jour le compteur dans la navbar
-      } else {
-        const errorData = await res.json();
-        toast.error(errorData.message || "Erreur lors de l’ajout au panier");
-      }
+      await api.post("/panier/add", { menuId, quantite });
+      toast.success("Ajouté au panier !");
+      refreshCount();
     } catch (err) {
-      console.error("Erreur add panier :", err);
-      toast.error("Erreur réseau, veuillez réessayer");
+      if (err instanceof AxiosError) {
+        const message = err.response?.data?.message || "Erreur lors de l’ajout au panier";
+        toast.error(message);
+      } else {
+        toast.error("Erreur inconnue lors de l’ajout au panier");
+      }
+      console.error("Erreur add panier:", err);
     }
   };
 
@@ -81,7 +70,6 @@ export default function MenuDuJour() {
     { key: "petit_dejeuner", label: "Petit-déjeuner" },
     { key: "repas", label: "Repas" },
   ];
-
   return (
     <>
       <NavbarEmployer />

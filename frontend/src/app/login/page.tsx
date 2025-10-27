@@ -41,7 +41,7 @@ setUser({
 
       // ✅ Redirection selon le rôle
       if (data.user.role === "admin") {
-        router.push("/dashboard");
+        router.push("/dashboard/listeMenuEmployer");
       } else if (data.user.role === "entreprise") {
         router.push("/");
       } else {
