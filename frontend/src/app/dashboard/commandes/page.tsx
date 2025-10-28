@@ -1,6 +1,6 @@
 "use client";
-
 import { useEffect, useState } from "react";
+import { getCommandes, updateCommandeStatut } from "../../../../services/commandeServices";
 
 type Menu = {
   id: number;
@@ -36,22 +36,16 @@ export default function CommandesListe() {
   const [commandes, setCommandes] = useState<Commande[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const token = localStorage.getItem("token");
 
+  // ✅ Charger les commandes
   const fetchCommandes = async () => {
-    setLoading(true);
-    setError(null);
     try {
-      const res = await fetch("http://localhost:3000/commandes/all", {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      if (!res.ok) throw new Error("Erreur lors de la récupération des commandes");
-
-      const data: Commande[] = await res.json();
+      setLoading(true);
+      const data = await getCommandes();
       setCommandes(data);
-    } catch (err: unknown) {
-      if (err instanceof Error) setError(err.message);
-      else setError("Une erreur est survenue");
+    } catch (err) {
+      setError("Erreur lors du chargement des commandes");
+      console.error(err);
     } finally {
       setLoading(false);
     }
@@ -61,22 +55,15 @@ export default function CommandesListe() {
     fetchCommandes();
   }, []);
 
+  // ✅ Changer le statut
   const changerStatut = async (id: number, statut: Commande["statut"]) => {
     try {
-      const res = await fetch(`http://localhost:3000/commandes/${id}/statut`, {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({ statut }),
-      });
-      const data = await res.json();
+      const updated = await updateCommandeStatut(id, statut);
       setCommandes((prev) =>
-        prev.map((cmd) => (cmd.id === id ? { ...cmd, statut: data.statut } : cmd))
+        prev.map((cmd) => (cmd.id === id ? { ...cmd, statut: updated.statut } : cmd))
       );
     } catch (err) {
-      console.error("Erreur lors du changement de statut:", err);
+      console.error("Erreur lors du changement de statut", err);
     }
   };
 
@@ -130,7 +117,9 @@ export default function CommandesListe() {
                   {commande.statut}
                 </span>
               </td>
-              <td className="p-2">{new Date(commande.createdAt).toLocaleString()}</td>
+              <td className="p-2">
+                {new Date(commande.createdAt).toLocaleString()}
+              </td>
               <td className="p-2">
                 <ul className="list-disc ml-4">
                   {commande.items.map((item) => (
