@@ -10,18 +10,17 @@ export default function FormulesSection() {
       description:
         "Commencez la journée avec nos formules petit-déjeuner variées : café, jus frais, viennoiseries et sandwichs pour vos équipes.",
       image: "/petit-dej.jpg",
-      link: "/formulePetitDej",
+      link: "formules/formulePetitDej",
     },
     {
       title: "Repas du Midi",
       description:
         "Des plats équilibrés, locaux et savoureux, livrés directement à vos bureaux. Idéal pour les pauses déjeuner des employés.",
       image: "/repas-midi.jpg",
-      link: "/formules/repas-midi",
+      link: "/formules/repas",
     },
   ];
 
-  // 👇 Déclenche l'animation au scroll
   useEffect(() => {
     const observer = new IntersectionObserver(
       (entries) => {
@@ -41,7 +40,7 @@ export default function FormulesSection() {
   }, []);
 
   return (
-    <section className="w-full py-20 bg-gray-100 overflow-hidden">
+    <section id="formules" className="w-full py-20 bg-gray-100 overflow-hidden">
       <div className="max-w-7xl mx-auto px-6 md:px-20 text-center">
         <h2 className="text-4xl font-extrabold text-gray-800 mb-6 fade-up">
           Nos <span className="text-[#F28C28]">Formules</span>

@@ -6,4 +6,9 @@ export const commandeService = {
     const res = await api.post(`/commande/${userId}`);
     return res.data;
   },
+  
+};
+export const getCommandes = async () => {
+  const response = await api.get("/commandes/all");
+  return response.data;
 };

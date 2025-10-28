@@ -8,6 +8,10 @@ export const getEntreprises = async () => {
   const response = await api.get("/user/entreprises");
   return response.data;
 };
+export const getEmployes = async () => {
+  const response = await api.get("/user/employes");
+  return response.data;
+};
 
 // 🔹 Inscription utilisateur
 export const registerUser = async (data: {

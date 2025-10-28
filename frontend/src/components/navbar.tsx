@@ -3,11 +3,32 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { FaPhoneAlt, FaBars, FaTimes } from "react-icons/fa";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 export default function Navbar() {
   const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
+  const [activeSection, setActiveSection] = useState<string>("");
+
+  // ✅ Active la détection de section visible seulement sur la page /formules
+  useEffect(() => {
+    if (pathname !== "/formules") return;
+
+    const sections = document.querySelectorAll("section");
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            setActiveSection(entry.target.id);
+          }
+        });
+      },
+      { threshold: 0.5 } // 50% de la section doit être visible
+    );
+
+    sections.forEach((section) => observer.observe(section));
+    return () => observer.disconnect();
+  }, [pathname]);
 
   return (
     <>
@@ -26,21 +47,22 @@ export default function Navbar() {
       <nav className="sticky top-0 left-0 w-full bg-white shadow z-50">
         <div className="max-w-7xl mx-auto px-6 md:px-20 flex items-center justify-between h-20">
           <div className="flex items-center space-x-2">
-            <Link href={'/'}> <Image
-              src="/logo.png"
-              alt="Logo"
-              width={130}
-              height={130}
-              aria-label="Logo de l'entreprise"
-            /></Link>
-           
+            <Link href="/">
+              <Image
+                src="/logo.png"
+                alt="Logo"
+                width={130}
+                height={130}
+                aria-label="Logo de l'entreprise"
+              />
+            </Link>
           </div>
 
           <div className="hidden md:flex items-center space-x-6">
-            <NavLink href="/" pathname={pathname}>Accueil</NavLink>
-            <NavLink href="/formules" pathname={pathname}>Formules</NavLink>
-            <NavLink href="/menu" pathname={pathname}>Menus</NavLink>
-            <NavLink href="/partenaire" pathname={pathname}>Nos Clients</NavLink>
+            <NavLink href="/" pathname={pathname} activeSection={activeSection}>Accueil</NavLink>
+            <NavLink href="/formules" pathname={pathname} activeSection={activeSection}>Formules</NavLink>
+            <NavLink href="/menu" pathname={pathname} activeSection={activeSection}>Menus</NavLink>
+            <NavLink href="/partenaire" pathname={pathname} activeSection={activeSection}>Partenaires</NavLink>
           </div>
 
           <div className="md:hidden">
@@ -52,18 +74,10 @@ export default function Navbar() {
 
         {isOpen && (
           <div className="md:hidden bg-white shadow-md px-6 py-4 space-y-3">
-            <MobileLink href="/" pathname={pathname} setIsOpen={setIsOpen}>
-              Accueil
-            </MobileLink>
-            <MobileLink href="/formules" pathname={pathname} setIsOpen={setIsOpen}>
-              Formules
-            </MobileLink>
-            <MobileLink href="/menu" pathname={pathname} setIsOpen={setIsOpen}>
-              Menus
-            </MobileLink>
-            <MobileLink href="/clients" pathname={pathname} setIsOpen={setIsOpen}>
-              Nos Clients
-            </MobileLink>
+            <MobileLink href="/" pathname={pathname} setIsOpen={setIsOpen}>Accueil</MobileLink>
+            <MobileLink href="/formules" pathname={pathname} setIsOpen={setIsOpen}>Formules</MobileLink>
+            <MobileLink href="/menu" pathname={pathname} setIsOpen={setIsOpen}>Menus</MobileLink>
+            <MobileLink href="/clients" pathname={pathname} setIsOpen={setIsOpen}>Nos Clients</MobileLink>
           </div>
         )}
       </nav>
@@ -81,12 +95,25 @@ export default function Navbar() {
   );
 }
 
-function NavLink({ href, pathname, children }: { href: string; pathname: string; children: React.ReactNode }) {
+function NavLink({
+  href,
+  pathname,
+  activeSection,
+  children,
+}: {
+  href: string;
+  pathname: string;
+  activeSection: string;
+  children: React.ReactNode;
+}) {
+  const isActive =
+    pathname === href || (pathname === "/formules" && activeSection === "formules");
+
   return (
     <Link
       href={href}
       className={`text-gray-700 hover:text-[#F28C28] pb-1 transition-all duration-300 ${
-        pathname === href ? "border-b-2 border-[#F28C28]" : ""
+        isActive ? "border-b-2 border-[#F28C28]" : ""
       }`}
     >
       {children}

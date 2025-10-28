@@ -74,7 +74,6 @@ async update(
 ) {
   const menuId = parseInt(id, 10);
 
-  // Si une image est uploadée, on l'envoie à Cloudinary
   if (file) {
     const result = await this.cloudinaryService.uploadImage(file);
     dto.image = result.secure_url;

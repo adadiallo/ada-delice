@@ -2,9 +2,9 @@
 
 import { useState } from "react";
 import SidebarAdmin from "../../components/sideBar/sidebarAdmin";
-import DashboardCards from "../counter/page";
 import AdminNavbar from "../navbarAdmin/page";
 import { ProtectedRoute } from "@/components/protectedRoe";
+import DashboardCard from "@/components/DashboardCard";
 
 
 
@@ -36,7 +36,7 @@ export default function DashboardLayout({ children }: { children?: React.ReactNo
         </aside>
 
         <main className="flex-1 p-6 ml-0 space-y-8">
-          <DashboardCards />
+          <DashboardCard />
           {children}
         </main>
       </div>

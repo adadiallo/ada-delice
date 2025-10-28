@@ -1,5 +1,6 @@
 import { User } from 'src/user/entities/user.entity';
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne } from 'typeorm';
+import { CommandeItem } from './commande-item.entity';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, OneToMany, CreateDateColumn } from 'typeorm';
 
 @Entity()
 export class Commande {
@@ -9,13 +10,16 @@ export class Commande {
   @ManyToOne(() => User, user => user.commandes, { onDelete: 'CASCADE' })
   user: User;
 
- @Column('json', { nullable: true })
-menus: { menu: any; quantite: number }[];
+  @OneToMany(() => CommandeItem, (item) => item.commande, { cascade: true })
+items: CommandeItem[];
 
 
-@Column({ default: 0 })
+  @Column({ default: 0 })
   total: number;
 
   @Column({ default: 'en attente' })
   statut: string;
+
+  @CreateDateColumn()
+  createdAt: Date;
 }

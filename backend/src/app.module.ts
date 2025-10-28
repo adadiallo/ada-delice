@@ -11,6 +11,7 @@ import { PanierItem } from './panier/entities/panier-item.entity';
 import { CommandeModule } from './commande/commande.module';
 import { Commande } from './commande/entites/commande.entity';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { CommandeItem } from './commande/entites/commande-item.entity';
 
 @Module({
   imports: [
@@ -29,7 +30,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
         username: configService.get<string>('DATABASE_USER'),
         password: configService.get<string>('DATABASE_PASSWORD'),
         database: configService.get<string>('DATABASE_NAME'),
-      entities: [User,MenuEmployer,PanierItem,Commande],
+      entities: [User,MenuEmployer,PanierItem,Commande,CommandeItem],
       synchronize: true, 
       
       }),

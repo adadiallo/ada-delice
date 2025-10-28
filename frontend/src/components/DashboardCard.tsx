@@ -2,6 +2,10 @@
 
 import { useEffect, useState } from "react";
 import { FiShoppingCart, FiUsers, FiBox } from "react-icons/fi";
+import { getMenus } from "../../services/menuService";
+import { getEmployes, getEntreprises } from "../../services/userService";
+import { getCommandes } from "../../services/commandeServices";
+
 
 export default function DashboardCards() {
   const [totals, setTotals] = useState({
@@ -16,20 +20,17 @@ export default function DashboardCards() {
 
   const fetchTotals = async () => {
     try {
-      const [entrepriseRes, commandesRes, employesRes] = await Promise.all([
-        fetch("http://localhost:3000/user/entreprises"),
-        fetch("https://e-commerce-6-uf80.onrender.com/commandes"),
-        fetch("http://localhost:3000/user/employes"),
+      // 🔸 Appels parallèles avec tes fonctions de service
+      const [entreprises, commandes, employes] = await Promise.all([
+        getEntreprises(),
+        getCommandes(),
+        getEmployes(),
       ]);
 
-      const entreprises = await entrepriseRes.json();
-      const commandes = await commandesRes.json();
-      const employes = await employesRes.json();
-
       setTotals({
-        employes: employes.length,
-        commandes: commandes.length,
         entreprises: entreprises.length,
+        commandes: commandes.length, // ici on suppose que "menus" représente les commandes
+        employes: employes.length,
       });
     } catch (err) {
       console.error("Erreur lors de la récupération des totaux:", err);

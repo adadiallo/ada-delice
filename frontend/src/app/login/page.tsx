@@ -39,7 +39,6 @@ export default function LoginPage() {
         role: data.user.role,
       });
 
-      toast.success("Connexion réussie !");
 
       if (data.user.role === "admin") {
         router.push("/dashboard/listeMenuEmployer");
@@ -48,16 +47,16 @@ export default function LoginPage() {
       } else {
         router.push("/menu");
       }
+            toast.success("Connexion réussie !");
+
     } catch (err: unknown) {
       console.error(err);
 
       if (axios.isAxiosError(err)) {
-        // 🚨 Capture le message d'erreur de NestJS et le stocke
         const message = err.response?.data?.message || "Identifiants invalides ou serveur inaccessible.";
         setError(message); 
         
-        // Nous conservons le toast.error pour les notifications rapides
-        // toast.error(message); 
+       
       } else {
         setError("Une erreur inconnue s'est produite.");
         toast.error("Une erreur inconnue s'est produite");
