@@ -1,7 +1,9 @@
 "use client";
+
 import { createContext, useContext, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
+import { userService } from "../services/userService";
 
 type User = {
   userId: number;
@@ -13,18 +15,14 @@ type UserContextType = {
   user: User | null;
   setUser: (user: User | null) => void;
   loading: boolean;
-  logout: () => void; 
+  logout: () => void;
 };
-
-
 
 const UserContext = createContext<UserContextType>({
   user: null,
   setUser: () => {},
   loading: true,
-
-  logout: () => {}, 
-
+  logout: () => {},
 });
 
 export const UserProvider = ({ children }: { children: React.ReactNode }) => {
@@ -32,40 +30,32 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
   const [loading, setLoading] = useState(true);
   const router = useRouter();
 
-  useEffect(() => {
-    const fetchUser = async () => {
-      const token = localStorage.getItem("token");
-      if (token) {
-        try {
-          const res = await fetch("http://localhost:3000/auth/profile", {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          });
-          if (res.ok) {
-            const userData = await res.json();
-            setUser(userData);
-          } else {
-            setUser(null);
-          }
-        } catch (err) {
-          console.error("Erreur lors de la récupération de l'utilisateur :", err);
-          setUser(null);
-        }
-      }
+  const fetchUser = async () => {
+    try {
+      const userData = await userService.getProfile();
+      setUser(userData);
+    } catch (err) {
+      console.error("Erreur récupération profil :", err);
+      setUser(null);
+    } finally {
       setLoading(false);
-    };
+    }
+  };
 
-    fetchUser();
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (token) {
+      fetchUser();
+    } else {
+      setLoading(false);
+    }
   }, []);
 
   const logout = () => {
-    localStorage.removeItem("token"); 
-
-    setUser(null); 
-                    toast.success("Deconnexion  reussi!");
-
-    router.push("/login"); 
+    localStorage.removeItem("token");
+    setUser(null);
+    toast.success("Déconnexion réussie !");
+    router.push("/login");
   };
 
   return (
@@ -75,4 +65,8 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
   );
 };
 
-export const useUser = () => useContext(UserContext);
+export const useUser = () => {
+  const context = useContext(UserContext);
+  if (!context) throw new Error("useUser doit être utilisé dans un UserProvider");
+  return context;
+};

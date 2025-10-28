@@ -28,3 +28,9 @@ export const registerUser = async (data: {
   const response = await api.post("/auth/login", data);
   return response.data;
  }
+ export const userService = {
+  getProfile: async () => {
+    const res = await api.get("/auth/profile");
+    return res.data;
+  },
+}

@@ -5,8 +5,7 @@ import { Toaster } from "react-hot-toast";
 import { UserProvider } from "../../context/userContext";
 import { CartProvider } from "../../context/panierContext";
 
-
-const inter = Inter({ subsets: ['latin'] });
+const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: "Ada Delice",
@@ -20,26 +19,24 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-           <body className={inter.className}>
-
-    <UserProvider>
+      <body className={inter.className}>
+        <UserProvider>
           <CartProvider>
             {children}
-<Toaster 
-  position="top-right" 
-  toastOptions={{
-    duration: 1000, 
-    error: {
-      style: {
-        background: '#ffebee', 
-        color: '#b71c1c',     
-      },
-    },
-  }}
-/>          </CartProvider>
+            <Toaster
+              position="top-right"
+              toastOptions={{
+                duration: 1000,
+                error: {
+                  style: {
+                    background: "#ffebee",
+                    color: "#b71c1c",
+                  },
+                },
+              }}
+            />{" "}
+          </CartProvider>
         </UserProvider>
-      
-
       </body>
     </html>
   );
