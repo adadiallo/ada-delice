@@ -2,6 +2,7 @@
 
 import { ProtectedRoute } from "@/components/protectedRoe";
 import { useEffect, useState } from "react";
+import { getEmployes } from "../../../../services/userService";
 
 type User = {
   id: number;
@@ -16,33 +17,21 @@ export default function EntreprisesListe() {
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
-  const fetchEntreprises = async () => {
-    setLoading(true);
-    setError(null);
-    try {
-      const res = await fetch("http://localhost:3000/user/employes", {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-      });
-      if (!res.ok) throw new Error("Erreur lors de la récupération des entreprises");
-
-      const data: User[] = await res.json();
-      setEntreprises(data);
-    } catch (err: unknown) {
-      if (err instanceof Error) {
-        setError(err.message);
-      } else {
-        setError("Une erreur est survenue");
+   useEffect(() => {
+      fetchEnmployes();
+    }, []);
+  const fetchEnmployes = async () => {
+      try {
+        const data = await getEmployes();
+        setEntreprises(data);
+      } catch (error) {
+        console.error("Erreur fetch:", error);
+              setError("Impossible de charger les entreprises");
+  
+      }finally {
+        setLoading(false);
       }
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    fetchEntreprises();
-  }, []);
+    };
 
   if (loading) return <p className="text-center mt-10">Chargement...</p>;
   if (error) return <p className="text-center mt-10 text-red-500">{error}</p>;
