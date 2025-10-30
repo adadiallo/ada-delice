@@ -90,7 +90,6 @@ const data = await panierService.getCart();
 
   // 🔹 Valider la commande
   const handleValiderCommande = async () => {
-  if (!user) return;
   try {
     await commandeService.create(); // plus besoin de passer userId
     toast.success("Commande validée !");
