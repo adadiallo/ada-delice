@@ -33,7 +33,7 @@ export default function PanierPage() {
       if (!user) return;
 
       try {
-        const data = await panierService.getByUser(user.userId);
+const data = await panierService.getCart();
         setPanier(data);
         calculerTotal(data);
       } catch (error) {
@@ -90,18 +90,18 @@ export default function PanierPage() {
 
   // 🔹 Valider la commande
   const handleValiderCommande = async () => {
-    if (!user) return;
-    try {
-      await commandeService.create(user.userId);
-      toast.success("Commande validée !");
-      setPanier([]);
-      setTotal(0);
-      refreshCount();
-    } catch (err) {
-      console.error("Erreur commande :", err);
-      toast.error("Erreur lors de la validation !");
-    }
-  };
+  if (!user) return;
+  try {
+    await commandeService.create(); // plus besoin de passer userId
+    toast.success("Commande validée !");
+    setPanier([]);
+    setTotal(0);
+    refreshCount();
+  } catch (err) {
+    console.error("Erreur commande :", err);
+    toast.error("Erreur lors de la validation !");
+  }
+};
 
   // 🔹 Affichage
   return (

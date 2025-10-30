@@ -48,4 +48,5 @@ async getCartItemCount(@Req() req) {
   const userId = req.user.userId;
   return this.panierService.getCartItemCount(userId);
 }
+
 }

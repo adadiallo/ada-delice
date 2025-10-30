@@ -1,18 +1,21 @@
 import api from "../utils/api";
 
 export const commandeService = {
-  // ✅ Créer une commande à partir du panier utilisateur
-  create: async (userId: number) => {
-    const res = await api.post(`/commande/${userId}`);
+  // ✅ Créer une commande à partir du panier utilisateur connecté
+  create: async (currency = "XOF") => {
+    const res = await api.post("/commandes/valider", { currency });
     return res.data;
   },
-  
-};
-export const getCommandes = async () => {
-  const response = await api.get("/commandes/all");
-  return response.data;
-};
-export const updateCommandeStatut = async (id: number, statut: string) => {
-  const response = await api.patch(`/commandes/${id}/statut`, { statut });
-  return response.data;
+
+  // ✅ Récupérer toutes les commandes
+  getAll: async () => {
+    const res = await api.get("/commandes/all");
+    return res.data;
+  },
+
+  // ✅ Mettre à jour le statut d'une commande
+  updateStatut: async (id: number, statut: "en attente" | "validée" | "livrée") => {
+    const res = await api.patch(`/commandes/${id}/statut`, { statut });
+    return res.data;
+  },
 };

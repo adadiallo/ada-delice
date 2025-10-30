@@ -1,31 +1,33 @@
 import api from "../utils/api";
 
 export const panierService = {
-  // ✅ Récupérer le panier d’un utilisateur
-  getByUser: async (userId: number) => {
-    const res = await api.get(`/panier/${userId}`);
+  // ✅ Récupérer le panier de l’utilisateur connecté
+  getCart: async () => {
+    const res = await api.get("/panier");
     return res.data;
   },
 
-  // ✅ Mettre à jour la quantité
-  updateItem: async (menuId: number, quantity: number) => {
-    const res = await api.patch(`/panier/update-item/${menuId}/${quantity}`);
+  // ✅ Ajouter un produit au panier
+  addItem: async (menuId: number, quantite: number) => {
+    const res = await api.post("/panier/add", { menuId, quantite });
     return res.data;
   },
 
-  // ✅ Supprimer un produit
+  // ✅ Mettre à jour la quantité d’un produit
+  updateItem: async (menuId: number, quantite: number) => {
+    const res = await api.patch("/panier/update", { menuId, quantite });
+    return res.data;
+  },
+
+  // ✅ Supprimer un produit du panier
   removeItem: async (menuId: number) => {
-    const res = await api.delete(`/panier/remove-item/${menuId}`);
+    const res = await api.delete(`/panier/remove/${menuId}`);
     return res.data;
   },
 
-  // ✅ Valider le panier (ou passer commande)
-  validate: async (userId: number) => {
-    const res = await api.post(`/commandes/valider`, { userId });
-    return res.data;
-  },
-   getCountByUser: async () => {
+  // ✅ Obtenir le nombre d’articles
+  getCountByUser: async () => {
     const res = await api.get("/panier/count");
-    return res.data.count; // ou { count: number } selon ton backend
+    return res.data.count;
   },
 };
