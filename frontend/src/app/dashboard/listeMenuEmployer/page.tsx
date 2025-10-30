@@ -2,7 +2,6 @@
 import { useEffect, useState } from "react";
 import { FiPlus, FiEdit, FiTrash } from "react-icons/fi";
 import Image from "next/image";
-import DashboardLayout from "../layout";
 import { MenuEmployer, getMenus, createMenu, updateMenu,deleteMenu} from "../../../../services/menuService";
 import toast from "react-hot-toast";
 import { ProtectedRoute } from "@/components/protectedRoe";

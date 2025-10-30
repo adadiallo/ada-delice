@@ -8,6 +8,8 @@ import NavbarEmployer from "../navbarEmployer/page";
 import toast from "react-hot-toast";
 import { useUser } from "../../../context/userContext";
 import { useCart } from "../../../context/panierContext";
+import { panierService } from "../../../services/panierServices";
+import { commandeService } from "../../../services/commandeServices";
 
 type PanierItem = {
   id: number;
@@ -28,14 +30,10 @@ export default function PanierPage() {
   // 🔹 Charger le panier depuis le backend
   useEffect(() => {
     const fetchPanier = async () => {
-      const token = localStorage.getItem("token");
-      if (!token || !user) return;
+      if (!user) return;
 
       try {
-        const res = await fetch("http://localhost:3000/panier", {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        const data = await res.json();
+        const data = await panierService.getByUser(user.userId);
         setPanier(data);
         calculerTotal(data);
       } catch (error) {
@@ -50,7 +48,10 @@ export default function PanierPage() {
 
   // 🔹 Calcul du total
   const calculerTotal = (items: PanierItem[]) => {
-    const total = items.reduce((acc, item) => acc + item.prix * item.quantite, 0);
+    const total = items.reduce(
+      (acc, item) => acc + item.prix * item.quantite,
+      0
+    );
     setTotal(total);
   };
 
@@ -58,68 +59,47 @@ export default function PanierPage() {
   const handleUpdateQuantite = async (menuId: number, quantite: number) => {
     if (quantite <= 0) return;
 
-    const token = localStorage.getItem("token");
     try {
-      const res = await fetch("http://localhost:3000/panier/update", {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({ menuId, quantite }),
-      });
-
-      if (res.ok) {
-        const updated = panier.map((item) =>
-          item.id === menuId ? { ...item, quantite } : item
-        );
-        setPanier(updated);
-        calculerTotal(updated);
-        toast.success("Quantité mise à jour !");
-      }
+      await panierService.updateItem(menuId, quantite);
+      const updated = panier.map((item) =>
+        item.id === menuId ? { ...item, quantite } : item
+      );
+      setPanier(updated);
+      calculerTotal(updated);
+      toast.success("Quantité mise à jour !");
     } catch (err) {
       console.error("Erreur update quantité :", err);
+      toast.error("Erreur lors de la mise à jour !");
     }
   };
 
   // 🔹 Supprimer un produit
   const handleRemove = async (menuId: number) => {
-    const token = localStorage.getItem("token");
     try {
-      const res = await fetch(`http://localhost:3000/panier/remove/${menuId}`, {
-        method: "DELETE",
-        headers: { Authorization: `Bearer ${token}` },
-      });
-
-      if (res.ok) {
-        const updated = panier.filter((item) => item.id !== menuId);
-        setPanier(updated);
-        calculerTotal(updated);
-        refreshCount();
-        toast.success("Produit retiré du panier !");
-      }
+      await panierService.removeItem(menuId);
+      const updated = panier.filter((item) => item.id !== menuId);
+      setPanier(updated);
+      calculerTotal(updated);
+      refreshCount();
+      toast.success("Produit retiré du panier !");
     } catch (err) {
       console.error("Erreur suppression produit :", err);
+      toast.error("Erreur lors de la suppression !");
     }
   };
 
-  // 🔹 Valider la commande (simple version)
+  // 🔹 Valider la commande
   const handleValiderCommande = async () => {
-    const token = localStorage.getItem("token");
+    if (!user) return;
     try {
-      const res = await fetch("http://localhost:3000/commandes/valider", {
-        method: "POST",
-        headers: { Authorization: `Bearer ${token}` },
-      });
-
-      if (res.ok) {
-        toast.success("Commande validée !");
-        setPanier([]);
-        setTotal(0);
-        refreshCount();
-      }
+      await commandeService.create(user.userId);
+      toast.success("Commande validée !");
+      setPanier([]);
+      setTotal(0);
+      refreshCount();
     } catch (err) {
       console.error("Erreur commande :", err);
+      toast.error("Erreur lors de la validation !");
     }
   };
 
@@ -128,7 +108,9 @@ export default function PanierPage() {
     <>
       <NavbarEmployer />
       <div className="max-w-6xl mx-auto p-6 mt-20">
-        <h1 className="text-4xl font-bold mb-8 text-center text-gray-800">Mon Panier</h1>
+        <h1 className="text-4xl font-bold mb-8 text-center text-gray-800">
+          Mon Panier
+        </h1>
 
         {loading ? (
           <p className="text-center text-gray-500">Chargement du panier...</p>
@@ -152,20 +134,26 @@ export default function PanierPage() {
                     />
                     <div>
                       <h2 className="font-semibold text-lg">{item.nom}</h2>
-                      <p className="text-gray-500">Prix unitaire : {item.prix} FCFA</p>
+                      <p className="text-gray-500">
+                        Prix unitaire : {item.prix} FCFA
+                      </p>
                     </div>
                   </div>
 
                   <div className="flex items-center gap-3 mt-4 md:mt-0">
                     <button
-                      onClick={() => handleUpdateQuantite(item.id, item.quantite - 1)}
+                      onClick={() =>
+                        handleUpdateQuantite(item.id, item.quantite - 1)
+                      }
                       className="px-3 py-1 bg-gray-200 rounded hover:bg-gray-300"
                     >
                       -
                     </button>
                     <span className="px-2">{item.quantite}</span>
                     <button
-                      onClick={() => handleUpdateQuantite(item.id, item.quantite + 1)}
+                      onClick={() =>
+                        handleUpdateQuantite(item.id, item.quantite + 1)
+                      }
                       className="px-3 py-1 bg-gray-200 rounded hover:bg-gray-300"
                     >
                       +
