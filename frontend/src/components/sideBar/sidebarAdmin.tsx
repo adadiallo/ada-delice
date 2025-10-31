@@ -3,6 +3,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
 import { FaUtensils, FaShoppingBag, FaBuilding, FaUsers, FaBars, FaTimes } from "react-icons/fa";
+import { MdOutlineRestaurantMenu } from "react-icons/md";
 
 export default function SidebarAdmin() {
   const pathname = usePathname();
@@ -13,6 +14,8 @@ export default function SidebarAdmin() {
     { name: "Liste Commandes", href: "/dashboard/commandes", icon: <FaShoppingBag /> },
     { name: "Liste Entreprises", href: "/dashboard/listeEntreprises", icon: <FaBuilding /> },
     { name: "Liste Employés", href: "/dashboard/employes", icon: <FaUsers /> },
+        { name: "Voir Menu", href: "/menu", icon: <MdOutlineRestaurantMenu /> },
+
   ];
 
   return (

@@ -54,7 +54,6 @@ export default function HomePage() {
         </p>
       </div>
 
-      {/* Fonctionnalité 2 */}
       <div className="bg-white p-8 rounded-2xl shadow-md hover:shadow-lg transition-all duration-500 transform hover:-translate-y-2 flex flex-col items-center">
         <div className="w-20 h-20 bg-[#FFF3E0] text-[#F28C28] rounded-full flex items-center justify-center mb-5">
      <CiDeliveryTruck size={32} color="#F28C28" />
