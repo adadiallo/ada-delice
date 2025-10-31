@@ -5,8 +5,12 @@ import HeroSection from "@/components/herosection";
 // import SectionConfiance from "./partenaire/app";
 import Footer from "@/components/footer";
 import Navbar from "@/components/navbar";
-import FormulesSection from "@/components/formule";
+// import FormulesSection from "@/components/formule";
 import SectionConfiance from "@/components/partenaire";
+import { MdOutlinePayments, MdOutlineRestaurantMenu } from "react-icons/md";
+import { CiDeliveryTruck } from "react-icons/ci";
+import { FiShoppingCart } from "react-icons/fi";
+import FormulesSection from "@/components/formule";
 
 
 export default function HomePage() {
@@ -39,10 +43,10 @@ export default function HomePage() {
     </p>
 
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10 fade-up">
-      {/* Fonctionnalité 1 */}
       <div className="bg-white p-8 rounded-2xl shadow-md hover:shadow-lg transition-all duration-500 transform hover:-translate-y-2 flex flex-col items-center">
         <div className="w-20 h-20 bg-[#FFF3E0] text-[#F28C28] rounded-full flex items-center justify-center mb-5">
-        
+        <MdOutlineRestaurantMenu size={32}  color="#F28C28"/>
+
         </div>
         <h3 className="font-semibold text-xl text-[#2C2C2C] mb-2">Menus variés</h3>
         <p className="text-gray-600">
@@ -53,7 +57,8 @@ export default function HomePage() {
       {/* Fonctionnalité 2 */}
       <div className="bg-white p-8 rounded-2xl shadow-md hover:shadow-lg transition-all duration-500 transform hover:-translate-y-2 flex flex-col items-center">
         <div className="w-20 h-20 bg-[#FFF3E0] text-[#F28C28] rounded-full flex items-center justify-center mb-5">
-     
+     <CiDeliveryTruck size={32} color="#F28C28" />
+
         </div>
         <h3 className="font-semibold text-xl text-[#2C2C2C] mb-2">Livraison rapide</h3>
         <p className="text-gray-600">
@@ -61,10 +66,9 @@ export default function HomePage() {
         </p>
       </div>
 
-      {/* Fonctionnalité 3 */}
       <div className="bg-white p-8 rounded-2xl shadow-md hover:shadow-lg transition-all duration-500 transform hover:-translate-y-2 flex flex-col items-center">
         <div className="w-20 h-20 bg-[#FFF3E0] text-[#F28C28] rounded-full flex items-center justify-center mb-5">
-       
+       <FiShoppingCart  color="#F28C28" size={32}/>
         </div>
         <h3 className="font-semibold text-xl text-[#2C2C2C] mb-2">Commandes faciles</h3>
         <p className="text-gray-600">
@@ -72,13 +76,13 @@ export default function HomePage() {
         </p>
       </div>
 
-      {/* Fonctionnalité 4 */}
       <div className="bg-white p-8 rounded-2xl shadow-md hover:shadow-lg transition-all duration-500 transform hover:-translate-y-2 flex flex-col items-center">
         <div className="w-20 h-20 bg-[#FFF3E0] text-[#F28C28] rounded-full flex items-center justify-center mb-5">
-       
+       <MdOutlinePayments  size={32} color=" #F28C28"/>
+
         </div>
         <h3 className="font-semibold text-xl text-[#2C2C2C] mb-2">Paiement sécurisé</h3>
-        <p className="text-gray-600">
+        <p className="text-gray-600 ">
           Payez en toute sécurité grâce à notre système fiable et protégé.
         </p>
       </div>

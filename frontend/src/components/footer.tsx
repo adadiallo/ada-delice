@@ -1,4 +1,5 @@
 "use client";
+import Link from "next/link";
 import { FaFacebookF, FaInstagram, FaTwitter } from "react-icons/fa";
 
 export default function Footer() {
@@ -24,25 +25,21 @@ export default function Footer() {
           </h2>
           <ul className="space-y-3 text-white">
             <li>
-              <a href="/menu-du-jour" className="transition">
+              <Link href="/menu" className="transition">
                 Menu du jour
-              </a>
+              </Link>
             </li>
             <li>
-              <a href="/login" className="transition">
+              <Link href="/login" className="transition">
                 Se connecter
-              </a>
+              </Link>
             </li>
             <li>
-              <a href="/inscription" className=" transition">
+              <Link href="/register" className=" transition">
                 S’inscrire
-              </a>
+              </Link>
             </li>
-            <li>
-              <a href="/contact" className=" transition">
-                Contactez-Nous
-              </a>
-            </li>
+            
           </ul>
         </div>
 

@@ -4,7 +4,6 @@ import Link from "next/link";
 import { useEffect } from "react";
 
 export default function HeroSection() {
-  // Parallax simple pour l'image
   useEffect(() => {
     const handleScroll = () => {
       const bg = document.querySelector("#hero-bg") as HTMLElement;

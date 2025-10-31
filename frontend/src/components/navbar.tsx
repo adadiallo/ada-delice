@@ -10,7 +10,6 @@ export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const [activeSection, setActiveSection] = useState<string>("");
 
-  // ✅ Active la détection de section visible seulement sur la page /formules
   useEffect(() => {
     if (pathname !== "/formules") return;
 
@@ -23,7 +22,7 @@ export default function Navbar() {
           }
         });
       },
-      { threshold: 0.5 } // 50% de la section doit être visible
+      { threshold: 0.5 } 
     );
 
     sections.forEach((section) => observer.observe(section));
@@ -60,9 +59,9 @@ export default function Navbar() {
 
           <div className="hidden md:flex items-center space-x-6">
             <NavLink href="/" pathname={pathname} activeSection={activeSection}>Accueil</NavLink>
-            <NavLink href="/formules" pathname={pathname} activeSection={activeSection}>Formules</NavLink>
+            <NavLink href="#" pathname={pathname} activeSection={activeSection}>Formules</NavLink>
             <NavLink href="/menu" pathname={pathname} activeSection={activeSection}>Menus</NavLink>
-            <NavLink href="/partenaire" pathname={pathname} activeSection={activeSection}>Partenaires</NavLink>
+            <NavLink href="#" pathname={pathname} activeSection={activeSection}>Partenaires</NavLink>
           </div>
 
           <div className="md:hidden">
@@ -75,7 +74,7 @@ export default function Navbar() {
         {isOpen && (
           <div className="md:hidden bg-white shadow-md px-6 py-4 space-y-3">
             <MobileLink href="/" pathname={pathname} setIsOpen={setIsOpen}>Accueil</MobileLink>
-            <MobileLink href="/formules" pathname={pathname} setIsOpen={setIsOpen}>Formules</MobileLink>
+            <MobileLink href="/formule" pathname={pathname} setIsOpen={setIsOpen}>Formules</MobileLink>
             <MobileLink href="/menu" pathname={pathname} setIsOpen={setIsOpen}>Menus</MobileLink>
             <MobileLink href="/clients" pathname={pathname} setIsOpen={setIsOpen}>Nos Clients</MobileLink>
           </div>

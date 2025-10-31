@@ -32,8 +32,8 @@ export default function DashboardLayout({ children }: { children?: React.ReactNo
             md:translate-x-0 md:static md:flex-shrink-0
           `}
         >
-          <SidebarAdmin onLinkClick={() => setSidebarOpen(false)} />
-        </aside>
+      <SidebarAdmin />
+              </aside>
 
         <main className="flex-1 p-6 ml-0 space-y-8">
           <DashboardCard />

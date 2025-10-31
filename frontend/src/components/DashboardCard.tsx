@@ -20,7 +20,6 @@ export default function DashboardCards() {
 
   const fetchTotals = async () => {
     try {
-      // 🔸 Appels parallèles avec tes fonctions de service
       const [entreprises, commandes, employes] = await Promise.all([
         getEntreprises(),
         getCommandes(),
@@ -29,7 +28,7 @@ export default function DashboardCards() {
 
       setTotals({
         entreprises: entreprises.length,
-        commandes: commandes.length, // ici on suppose que "menus" représente les commandes
+        commandes: commandes.length, 
         employes: employes.length,
       });
     } catch (err) {

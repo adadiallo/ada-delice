@@ -95,7 +95,7 @@ export default function CommandesListe() {
             <th className="p-2 text-left">Total</th>
             <th className="p-2 text-left">Statut</th>
             <th className="p-2 text-left">Date</th>
-            <th className="p-2 text-left">Items</th>
+            <th className="p-2 text-left">Plats</th>
             <th className="p-2 text-left">Actions</th>
           </tr>
         </thead>

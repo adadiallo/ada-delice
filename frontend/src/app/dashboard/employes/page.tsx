@@ -40,10 +40,9 @@ export default function EntreprisesListe() {
     <ProtectedRoute allowedRoles={["admin"]}>
       <div className="max-w-5xl mx-auto mt-10 p-4 text-sm">
         <h2 className="text-xl font-semibold text-[#F28C28] mb-4">
-          Liste des Employes
+ Liste des Employes
         </h2>
 
-        {/* Conteneur scrollable pour mobile */}
         <div className="overflow-x-auto">
           <table className="min-w-full border border-gray-200 rounded-lg overflow-hidden">
             <thead className="bg-[#F28C28] text-white">
