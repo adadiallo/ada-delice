@@ -123,7 +123,7 @@ export default function MenuDuJour() {
                       </p>
                       <button
                         onClick={() => addToPanier(menu.id, 1)}
-                        className="w-full px-6 py-2 bg-[#F28C28] text-white rounded-lg hover:bg-[#fff] hover:text-[#F28C28] transition font-medium cursor-pointer"
+                        className="w-full px-6 py-2 bg-[#F28C28] text-white rounded-lg transition font-medium cursor-pointer"
                       >
                         Ajouter au panier
                       </button>
