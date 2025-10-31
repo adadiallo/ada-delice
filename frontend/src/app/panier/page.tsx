@@ -27,7 +27,6 @@ export default function PanierPage() {
   const [loading, setLoading] = useState(true);
   const [total, setTotal] = useState(0);
 
-  // 🔹 Charger le panier depuis le backend
   useEffect(() => {
     const fetchPanier = async () => {
       if (!user) return;
@@ -46,7 +45,6 @@ const data = await panierService.getCart();
     fetchPanier();
   }, [user]);
 
-  // 🔹 Calcul du total
   const calculerTotal = (items: PanierItem[]) => {
     const total = items.reduce(
       (acc, item) => acc + item.prix * item.quantite,
@@ -55,7 +53,6 @@ const data = await panierService.getCart();
     setTotal(total);
   };
 
-  // 🔹 Mettre à jour la quantité (+ ou -)
   const handleUpdateQuantite = async (menuId: number, quantite: number) => {
     if (quantite <= 0) return;
 
@@ -73,7 +70,6 @@ const data = await panierService.getCart();
     }
   };
 
-  // 🔹 Supprimer un produit
   const handleRemove = async (menuId: number) => {
     try {
       await panierService.removeItem(menuId);
@@ -88,10 +84,9 @@ const data = await panierService.getCart();
     }
   };
 
-  // 🔹 Valider la commande
   const handleValiderCommande = async () => {
   try {
-    await commandeService.create(); // plus besoin de passer userId
+    await commandeService.create(); 
     toast.success("Commande validée !");
     setPanier([]);
     setTotal(0);
@@ -102,7 +97,6 @@ const data = await panierService.getCart();
   }
 };
 
-  // 🔹 Affichage
   return (
     <>
       <NavbarEmployer />

@@ -53,7 +53,7 @@ export default function MenuDuJour() {
   const addToPanier = async (menuId: number, quantite: number = 1) => {
     try {
       await api.post("/panier/add", { menuId, quantite });
-      toast.success("Ajouté au panier !");
+      toast.success("menu ajouté au panier !");
       refreshCount();
     } catch (err) {
       if (err instanceof AxiosError) {
@@ -123,7 +123,7 @@ export default function MenuDuJour() {
                       </p>
                       <button
                         onClick={() => addToPanier(menu.id, 1)}
-                        className="w-full px-6 py-2 bg-[#F28C28] text-white rounded-lg hover:bg-[#C0392B] transition font-medium"
+                        className="w-full px-6 py-2 bg-[#F28C28] text-white rounded-lg hover:bg-[#fff] transition font-medium cursor-pointer"
                       >
                         Ajouter au panier
                       </button>
