@@ -3,6 +3,8 @@ import Link from "next/link";
 import { useState, useEffect } from "react";
 import { getEntreprises, registerUser } from "../../../services/userService";
 import { AxiosError } from "axios";
+import { useRouter } from "next/navigation";
+import toast from "react-hot-toast";
 
 export default function RegisterPage() {
   const [role, setRole] = useState<"entreprise" | "employee">("entreprise");
@@ -13,8 +15,8 @@ export default function RegisterPage() {
     password: "",
   });
   const [entreprises, setEntreprises] = useState<{ id: number; nomEntreprise: string }[]>([]);
+  const router = useRouter();
 
-  // 🔹 Charger la liste des entreprises
   useEffect(() => {
     getEntreprises()
       .then(setEntreprises)
@@ -40,7 +42,8 @@ export default function RegisterPage() {
 
     try {
       await registerUser(bodyData);
-      alert("Inscription réussie !");
+ router.push('/login')
+ toast.success('Inscription reussi')
     } catch (err) {
   const error = err as AxiosError<{ message?: string }>;
   console.error(error);
