@@ -14,7 +14,7 @@ type User = {
 
 export default function EntreprisesListe() {
   const [entreprises, setEntreprises] = useState<User[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
+  // const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   useEffect(() => {
     fetchEntreprises();
@@ -27,14 +27,12 @@ const fetchEntreprises = async () => {
       console.error("Erreur fetch:", error);
             setError("Impossible de charger les entreprises");
 
-    }finally {
-      setLoading(false);
     }
   };
 
 
 
-  if (loading) return <p className="text-center mt-10">Chargement...</p>;
+  // if (loading) return <p className="text-center mt-10">Chargement...</p>;
   if (error) return <p className="text-center mt-10 text-red-500">{error}</p>;
 
   return (

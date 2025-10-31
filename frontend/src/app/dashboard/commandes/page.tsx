@@ -34,21 +34,19 @@ type Commande = {
 
 export default function CommandesListe() {
   const [commandes, setCommandes] = useState<Commande[]>([]);
-  const [loading, setLoading] = useState(true);
+  // const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   // ✅ Charger les commandes
   const fetchCommandes = async () => {
     try {
-      setLoading(true);
+      // setLoading(true);
       const data = await getCommandes();
       setCommandes(data);
     } catch (err) {
       setError("Erreur lors du chargement des commandes");
       console.error(err);
-    } finally {
-      setLoading(false);
-    }
+    } 
   };
 
   useEffect(() => {
@@ -80,7 +78,7 @@ export default function CommandesListe() {
     }
   };
 
-  if (loading) return <p className="text-center mt-10">Chargement...</p>;
+  // if (loading) return <p className="text-center mt-10">Chargement...</p>;
   if (error) return <p className="text-center mt-10 text-red-500">{error}</p>;
 
   return (
